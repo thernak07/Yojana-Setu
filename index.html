@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YojanaSetu — NSFDC Scheme Recommender</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#221d17; --ink-soft:#5d5749;
+    --paper:#FAF6EE; --paper-raised:#FFFFFF; --paper-sunk:#F1EADA;
+    --navy:#16233A; --navy-soft:#324361;
+    --saffron:#E2903F; --saffron-deep:#B5691F;
+    --green:#2C6B4F; --green-bg:#e6f0ea;
+    --red:#9C3B32; --red-bg:#fbeae7;
+    --line:#E3D9C2; --line-strong:#c9bb96;
+    --shadow: 0 1px 2px rgba(34,29,23,0.04), 0 8px 24px -12px rgba(34,29,23,0.12);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif; line-height:1.55;
+  }
+  h1,h2,h3{ font-family:'Source Serif 4',Georgia,serif; font-weight:600; margin:0; letter-spacing:-0.01em; }
+  a{color:var(--navy);}
+
+  .topbar{
+    background:var(--navy); color:#fff;
+    padding:10px 24px; font-size:0.78rem; text-align:center;
+    letter-spacing:0.02em;
+  }
+  .site-header{
+    border-bottom:1px solid var(--line);
+    padding:18px 24px; display:flex; align-items:center; justify-content:space-between;
+    background:var(--paper-raised);
+  }
+  .brand{ display:flex; align-items:center; gap:9px; font-family:'Source Serif 4',serif; font-weight:700; font-size:1.2rem; color:var(--navy); }
+  .brand-mark{
+    width:30px;height:30px;border-radius:7px;
+    background:linear-gradient(135deg, var(--saffron) 0%, var(--saffron-deep) 100%);
+    display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem;font-weight:700;
+    font-family:'Source Serif 4',serif;
+  }
+  .brand span{color:var(--saffron-deep);}
+  #langToggle{
+    border:1px solid var(--line-strong); background:#fff; color:var(--navy);
+    padding:7px 14px; border-radius:20px; font:inherit; font-size:0.82rem; font-weight:600; cursor:pointer;
+  }
+  #langToggle:hover{border-color:var(--navy);}
+
+  main{max-width:720px;margin:0 auto;padding:0 24px 100px;}
+
+  .hero{padding:52px 0 36px;}
+  .eyebrow{
+    display:inline-block; font-size:0.75rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+    color:var(--saffron-deep); background:#fbeedd; padding:4px 11px; border-radius:20px; margin-bottom:16px;
+  }
+  .hero h1{font-size:2.1rem;line-height:1.22;max-width:22ch;}
+  .hero p{margin-top:14px;color:var(--ink-soft);font-size:1.03rem;max-width:52ch;}
+
+  .stepnum{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;
+    font-size:0.78rem;font-weight:700;margin-right:9px;flex-shrink:0;
+  }
+  .section-title{ display:flex; align-items:center; font-size:1.15rem; margin-bottom:18px; color:var(--navy); }
+
+  .card{ background:var(--paper-raised); border:1px solid var(--line); border-radius:10px; padding:30px; margin-top:24px; box-shadow:var(--shadow); }
+
+  .field{margin-bottom:18px;}
+  label.field-label{display:block;font-size:0.85rem;font-weight:600;color:var(--ink-soft);margin-bottom:7px;}
+  input[type=number], select{
+    width:100%; padding:11px 13px; border:1px solid var(--line-strong); border-radius:6px;
+    background:#fff; font:inherit; font-size:0.98rem; color:var(--ink);
+  }
+  input:focus, select:focus, button:focus, .radio-pill input:focus + span{ outline:2px solid var(--navy); outline-offset:2px; }
+
+  .radio-group{display:flex;flex-wrap:wrap;gap:8px;}
+  .radio-pill{position:relative;}
+  .radio-pill input{position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;margin:0;}
+  .radio-pill span{ display:inline-block; padding:10px 16px; border:1px solid var(--line-strong); border-radius:20px; font-size:0.92rem; background:#fff; color:var(--ink-soft); }
+  .radio-pill input:checked + span{ background:var(--navy); border-color:var(--navy); color:#fff; }
+
+  button.primary{
+    background:var(--saffron-deep); color:#fff; border:none; padding:13px 26px; border-radius:7px;
+    font:inherit; font-size:1rem; font-weight:600; cursor:pointer; width:100%;
+  }
+  button.primary:hover{background:#9a5716;}
+
+  .warn-box{ display:none; margin-top:16px; background:var(--red-bg); border:1px solid #eecdc7; color:var(--red); padding:12px 14px; border-radius:7px; font-size:0.88rem; }
+
+  .location-btn{
+    margin-top:9px; background:none; border:1px dashed var(--line-strong); color:var(--navy-soft);
+    padding:9px 13px; border-radius:6px; font:inherit; font-size:0.85rem; font-weight:600; cursor:pointer; width:100%; text-align:left;
+  }
+  .location-btn:hover{ border-color:var(--navy); color:var(--navy); }
+  .location-btn.active{ border-style:solid; border-color:var(--green); color:var(--green); background:var(--green-bg); }
+  .location-status{ font-size:0.8rem; color:var(--ink-soft); margin-top:6px; min-height:1.1em; }
+  .location-status.error{ color:var(--red); }
+
+  #tierResult, #emiResult{ display:none; margin-top:28px; padding-top:28px; border-top:1px solid var(--line); }
+  #tierResult.show, #emiResult.show{ display:block; animation:fadeUp .4s ease; }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  .result-label{ font-size:0.78rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--green); margin-bottom:8px; }
+  .tier-name{ font-size:1.4rem; color:var(--navy); }
+  .tier-desc{ color:var(--ink-soft); margin-top:6px; max-width:56ch; }
+  .tier-stats{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:22px; }
+  @media(min-width:520px){ .tier-stats{grid-template-columns:repeat(4,1fr);} }
+  .stat{ background:var(--paper-sunk); border-radius:8px; padding:14px 12px; text-align:left; }
+  .stat-num{ display:block; font-family:'Source Serif 4',serif; font-weight:700; font-size:1.25rem; color:var(--navy); }
+  .stat-label{ display:block; font-size:0.72rem; color:var(--ink-soft); margin-top:3px; }
+
+  .emi-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+  .emi-amount{ font-family:'Source Serif 4',serif; font-weight:700; font-size:2.4rem; color:var(--navy); }
+  .emi-permonth{ font-family:'Inter',sans-serif; font-size:1rem; font-weight:500; color:var(--ink-soft); }
+  .emi-detail{ color:var(--ink-soft); margin-top:4px; }
+  .emi-moratorium{ margin-top:12px; font-size:0.88rem; background:#fff; border-left:3px solid var(--saffron); padding:9px 13px; border-radius:0 6px 6px 0; }
+
+  #partnersSection{ display:none; margin-top:36px; }
+  #partnersSection.show{ display:block; animation:fadeUp .4s ease; }
+  .partners-sub{ color:var(--ink-soft); font-size:0.92rem; max-width:58ch; margin-top:6px; }
+  .npa-note{ margin-top:14px; font-size:0.85rem; color:var(--red); background:var(--red-bg); display:inline-block; padding:6px 12px; border-radius:20px; }
+  .partner-list{margin-top:18px;}
+  .partner{ background:var(--paper-raised); border:1px solid var(--line); border-radius:8px; padding:16px 18px; margin-bottom:10px; box-shadow:var(--shadow); }
+  .partner-head{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .partner-name{ font-weight:600; color:var(--navy); }
+  .partner-type{ font-size:0.72rem; font-weight:700; background:var(--green-bg); color:var(--green); padding:3px 9px; border-radius:20px; white-space:nowrap; }
+  .partner-meta{ font-size:0.85rem; color:var(--ink-soft); margin-top:4px; }
+  .no-partners{ color:var(--ink-soft); padding:16px 0; }
+
+  #eligibleSchemesSection{ display:none; margin-top:36px; }
+  #eligibleSchemesSection.show{ display:block; animation:fadeUp .4s ease; }
+  .eligible-summary{ font-family:'Source Serif 4',serif; font-size:1.3rem; color:var(--navy); }
+  .eligible-sub{ color:var(--ink-soft); font-size:0.92rem; margin-top:4px; margin-bottom:22px; }
+  .scheme{ background:var(--paper-raised); border:1px solid var(--line); border-radius:8px; padding:18px 20px; margin-bottom:12px; box-shadow:var(--shadow); }
+  .scheme-head{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; }
+  .scheme-name{ font-weight:600; color:var(--navy); font-size:1.02rem; }
+  .scheme-badges{ display:flex; gap:6px; flex-wrap:wrap; }
+  .badge-level{ font-size:0.7rem; font-weight:700; padding:3px 9px; border-radius:20px; white-space:nowrap; text-transform:uppercase; letter-spacing:0.02em; }
+  .badge-level.central{ background:#e6ecf5; color:var(--navy); }
+  .badge-level.state{ background:#fbeedd; color:var(--saffron-deep); }
+  .badge-benefit{ font-size:0.72rem; font-weight:600; background:var(--green-bg); color:var(--green); padding:3px 9px; border-radius:20px; white-space:nowrap; }
+  .scheme-desc{ margin-top:8px; color:var(--ink-soft); font-size:0.92rem; }
+  .scheme-apply{ margin-top:10px; font-size:0.85rem; }
+  .scheme-apply a{ font-weight:600; }
+  .no-schemes{ color:var(--ink-soft); padding:12px 0; }
+
+  #errorBanner{ display:none; max-width:720px; margin:16px auto 0; background:var(--red-bg); border:1px solid #eecdc7; color:var(--red); padding:14px 18px; border-radius:8px; font-size:0.9rem; }
+  #btypeOtherText{ width:100%; padding:10px 12px; border:1px solid var(--line-strong); border-radius:6px; font:inherit; font-size:0.92rem; }
+
+  footer{ max-width:720px;margin:0 auto;padding:28px 24px; color:var(--ink-soft); font-size:0.8rem; border-top:1px solid var(--line); }
+</style>
+</head>
+<body>
+
+<script>
+  window.addEventListener('error', function(e) {
+    var banner = document.getElementById('errorBanner');
+    if (banner) {
+      banner.style.display = 'block';
+      banner.textContent = 'Something went wrong loading this page (' + (e.message || 'unknown error') + '). Please try reloading, or open this file with a local server instead of double-clicking it.';
+    }
+  });
+</script>
+
+<div class="topbar">Prototype built for Smart India Hackathon 2026 — NSFDC Channel Finance problem statement</div>
+<div id="errorBanner"></div>
+
+<header class="site-header">
+  <div class="brand"><span class="brand-mark">Y</span>Yojana<span>Setu</span></div>
+  <button id="langToggle">हिंदी</button>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="eyebrow">Concessional Credit &amp; Welfare Schemes, Simplified</div>
+    <h1 data-i18n="heroTitle">Find every government scheme you actually qualify for.</h1>
+    <p data-i18n="heroSub">Enter your details once. We'll check them against central and state schemes — filtered by your category, gender, age and income — then walk you through EMI and the nearest office to apply.</p>
+  </div>
+
+  <div class="card">
+    <div class="section-title"><span class="stepnum">1</span><span data-i18n="step1">Tell us about you</span></div>
+    <form id="needForm">
+      <div class="field">
+        <label class="field-label" data-i18n="genderLabel">Gender</label>
+        <div class="radio-group" id="genderGroup">
+          <label class="radio-pill"><input type="radio" name="gender" value="woman"><span data-i18n="woman">Woman</span></label>
+          <label class="radio-pill"><input type="radio" name="gender" value="man"><span data-i18n="man">Man</span></label>
+          <label class="radio-pill"><input type="radio" name="gender" value="other"><span data-i18n="otherGender">Other</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label" for="age" data-i18n="ageLabel">Age</label>
+        <input type="number" id="age" min="16" max="100" placeholder="e.g. 27" required>
+      </div>
+      <div class="field">
+        <label class="field-label" data-i18n="categoryLabel">Category</label>
+        <div class="radio-group" id="categoryGroup">
+          <label class="radio-pill"><input type="radio" name="category" value="general"><span data-i18n="general">General</span></label>
+          <label class="radio-pill"><input type="radio" name="category" value="obc"><span data-i18n="obc">OBC</span></label>
+          <label class="radio-pill"><input type="radio" name="category" value="sc"><span data-i18n="sc">SC</span></label>
+          <label class="radio-pill"><input type="radio" name="category" value="st"><span data-i18n="st">ST</span></label>
+          <label class="radio-pill"><input type="radio" name="category" value="minority"><span data-i18n="minority">Minority</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label" data-i18n="isEducation">What is this loan for?</label>
+        <div class="radio-group">
+          <label class="radio-pill"><input type="radio" name="need" value="project" checked><span data-i18n="project">A business / project</span></label>
+          <label class="radio-pill"><input type="radio" name="need" value="education"><span data-i18n="education">Education</span></label>
+        </div>
+      </div>
+      <div class="field" id="businessFields">
+        <label class="field-label" data-i18n="stageLabel">Business stage</label>
+        <div class="radio-group" id="stageGroup">
+          <label class="radio-pill"><input type="radio" name="stage" value="idea"><span data-i18n="stageIdea">Just an idea</span></label>
+          <label class="radio-pill"><input type="radio" name="stage" value="starting"><span data-i18n="stageStarting">Starting up</span></label>
+          <label class="radio-pill"><input type="radio" name="stage" value="existing"><span data-i18n="stageExisting">Already running</span></label>
+        </div>
+      </div>
+      <div class="field" id="btypeField">
+        <label class="field-label" data-i18n="btypeLabel">Business type</label>
+        <div class="radio-group" id="btypeGroup">
+          <label class="radio-pill"><input type="radio" name="btype" value="manufacturing"><span data-i18n="btypeManufacturing">Manufacturing</span></label>
+          <label class="radio-pill"><input type="radio" name="btype" value="service"><span data-i18n="btypeService">Service</span></label>
+          <label class="radio-pill"><input type="radio" name="btype" value="agriculture"><span data-i18n="btypeAgriculture">Agriculture</span></label>
+          <label class="radio-pill"><input type="radio" name="btype" value="retail"><span data-i18n="btypeRetail">Retail / Trading</span></label>
+          <label class="radio-pill"><input type="radio" name="btype" value="tech"><span data-i18n="btypeTech">Tech / Digital</span></label>
+          <label class="radio-pill"><input type="radio" name="btype" value="handicraft"><span data-i18n="btypeHandicraft">Handicraft / Artisan</span></label>
+          <label class="radio-pill"><input type="radio" name="btype" value="other"><span data-i18n="btypeOther">Other</span></label>
+        </div>
+        <div class="field" id="btypeOtherField" style="display:none;margin-top:10px;">
+          <input type="text" id="btypeOtherText" placeholder="Tell us your business type" data-i18n-placeholder="btypeOtherPlaceholder">
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label" for="income" data-i18n="income">Annual family income (₹)</label>
+        <input type="number" id="income" min="0" placeholder="e.g. 250000" required>
+      </div>
+      <div class="field">
+        <label class="field-label" for="cost" data-i18n="cost">Estimated project / course cost (₹)</label>
+        <input type="number" id="cost" min="0" placeholder="e.g. 300000" required>
+      </div>
+      <div class="field">
+        <label class="field-label" for="city" data-i18n="location">Nearest city</label>
+        <select id="city" required>
+          <option value="">—</option>
+          <option>Jalandhar</option><option>Ludhiana</option><option>Amritsar</option><option>Kapurthala</option>
+          <option>Delhi</option><option>Mumbai</option><option>Pune</option><option>Nashik</option>
+          <option>Lucknow</option><option>Kanpur</option><option>Varanasi</option>
+          <option>Chennai</option><option>Coimbatore</option><option>Madurai</option>
+        </select>
+        <button type="button" id="useLocationBtn" class="location-btn" data-i18n="useLocation">📍 Use my exact location instead</button>
+        <div class="location-status" id="locationStatus"></div>
+      </div>
+      <button type="submit" class="primary" data-i18n="findBtn">Find my schemes</button>
+    </form>
+  </div>
+
+  <div id="eligibleSchemesSection"></div>
+
+  <div class="card" id="corpCard" style="display:none;">
+    <div class="section-title"><span class="stepnum">2</span><span data-i18n="corpStep">Your dedicated corporation scheme</span></div>
+    <div id="tierResult"></div>
+  </div>
+
+  <div class="card" id="emiCard" style="display:none;">
+    <div class="section-title"><span class="stepnum">3</span><span id="emiTitle" data-i18n="emiTitle">Estimate your EMI</span></div>
+    <form id="emiForm">
+      <div class="emi-row">
+        <div class="field">
+          <label class="field-label" for="loanAmount" data-i18n="loanAmount">Loan amount (₹)</label>
+          <input type="number" id="loanAmount" min="1000" required>
+        </div>
+        <div class="field">
+          <label class="field-label" for="tenureYears" data-i18n="tenure">Tenure (years)</label>
+          <input type="number" id="tenureYears" min="1" max="15" required>
+        </div>
+      </div>
+      <button type="submit" class="primary" id="emiCalcBtn" data-i18n="calcBtn">Calculate EMI</button>
+    </form>
+    <div id="emiResult"></div>
+  </div>
+
+  <div id="partnersSection"></div>
+</main>
+
+<footer data-i18n="disclaimer">YojanaSetu is a student prototype for SIH 2026 (NSFDC-family Channel Finance + broader scheme discovery). Figures are simplified for demonstration — always confirm final terms with the relevant department or Channel Partner.</footer>
+
+<script>
+// NSFDC-STYLE CORPORATION TIERS
+// NSFDC (SC), NSTFDC (ST), NBCFDC (OBC), and NMDFC (Minority) all follow the
+// same Channel Finance structure (Micro / Term / Educational loans through
+// SCAs, PSBs, RRBs, NBFC-MFIs). Rates/limits/moratorium are simplified
+// representative values for this prototype.
+
+const CORPORATIONS = {
+  sc: {
+    key: "sc",
+    shortName: "NSFDC",
+    fullName: { en: "National Scheduled Castes Finance & Development Corporation", hi: "राष्ट्रीय अनुसूचित जाति वित्त एवं विकास निगम" }
+  },
+  st: {
+    key: "st",
+    shortName: "NSTFDC",
+    fullName: { en: "National Scheduled Tribes Finance & Development Corporation", hi: "राष्ट्रीय अनुसूचित जनजाति वित्त एवं विकास निगम" }
+  },
+  obc: {
+    key: "obc",
+    shortName: "NBCFDC",
+    fullName: { en: "National Backward Classes Finance & Development Corporation", hi: "राष्ट्रीय पिछड़ा वर्ग वित्त एवं विकास निगम" }
+  },
+  minority: {
+    key: "minority",
+    shortName: "NMDFC",
+    fullName: { en: "National Minorities Development & Finance Corporation", hi: "राष्ट्रीय अल्पसंख्यक विकास एवं वित्त निगम" }
+  }
+};
+
+function tiersFor(corpKey) {
+  return [
+    {
+      id: "micro",
+      name: { en: "Micro Finance Scheme", hi: "माइक्रो फाइनेंस योजना" },
+      forProject: true,
+      maxAmount: 140000, minAmount: 0, rate: 6.5, maxTenureYears: 5, moratoriumMonths: 3, subsidyPct: 90,
+      desc: {
+        en: "For small income-generating projects — shop setup, small trade, tailoring, repair units, etc.",
+        hi: "छोटी आय-सृजन परियोजनाओं के लिए — दुकान, छोटा व्यापार, सिलाई, मरम्मत इकाई आदि।"
+      }
+    },
+    {
+      id: "term",
+      name: { en: "Term Loan Scheme", hi: "टर्म लोन योजना" },
+      forProject: true,
+      maxAmount: 5000000, minAmount: 140001, rate: 8, maxTenureYears: 10, moratoriumMonths: 6, subsidyPct: 90,
+      desc: {
+        en: "For larger projects — manufacturing units, transport vehicles, agri-processing, larger retail setups.",
+        hi: "बड़ी परियोजनाओं के लिए — विनिर्माण इकाई, परिवहन वाहन, कृषि-प्रसंस्करण, बड़ा खुदरा व्यापार।"
+      }
+    },
+    {
+      id: "education",
+      name: { en: "Educational Loan Scheme", hi: "शैक्षिक ऋण योजना" },
+      forProject: false,
+      maxAmount: 2000000, minAmount: 0, rate: 6.5, maxTenureYears: 15, moratoriumMonths: 12, subsidyPct: 90,
+      desc: {
+        en: "Covers tuition, hostel and course costs for professional/technical courses in India or abroad.",
+        hi: "भारत या विदेश में व्यावसायिक/तकनीकी पाठ्यक्रमों के लिए ट्यूशन, छात्रावास और पाठ्यक्रम लागत को कवर करता है।"
+      }
+    }
+  ];
+}
+
+// CHANNEL PARTNERS — sample directory. Real deployment would sync with each
+// corporation's live Channel Partner database including current fund
+// utilisation / NPA status.
+const PARTNERS = [
+  { name: "State SC Development Corp — Punjab", type: "SCA", city: "Jalandhar", state: "Punjab", lat: 31.326, lng: 75.576, npaFlag: false, handles: ["micro","term","education"] },
+  { name: "Punjab & Sind Bank — Ludhiana Branch", type: "PSB", city: "Ludhiana", state: "Punjab", lat: 30.901, lng: 75.857, npaFlag: false, handles: ["micro","term"] },
+  { name: "Punjab Gramin Bank", type: "RRB", city: "Kapurthala", state: "Punjab", lat: 31.380, lng: 75.383, npaFlag: true, handles: ["micro"] },
+  { name: "State SC Development Corp — Delhi", type: "SCA", city: "Delhi", state: "Delhi", lat: 28.613, lng: 77.209, npaFlag: false, handles: ["micro","term","education"] },
+  { name: "Canara Bank — Connaught Place", type: "PSB", city: "Delhi", state: "Delhi", lat: 28.632, lng: 77.220, npaFlag: false, handles: ["term","education"] },
+  { name: "NBFC-MFI Sahayog Finance", type: "NBFC-MFI", city: "Delhi", state: "Delhi", lat: 28.700, lng: 77.10, npaFlag: false, handles: ["micro"] },
+  { name: "State SC Development Corp — Maharashtra", type: "SCA", city: "Mumbai", state: "Maharashtra", lat: 19.076, lng: 72.877, npaFlag: false, handles: ["micro","term","education"] },
+  { name: "Bank of Maharashtra — Pune", type: "PSB", city: "Pune", state: "Maharashtra", lat: 18.520, lng: 73.856, npaFlag: false, handles: ["micro","term"] },
+  { name: "Maharashtra Gramin Bank", type: "RRB", city: "Nashik", state: "Maharashtra", lat: 19.997, lng: 73.789, npaFlag: true, handles: ["micro","term"] },
+  { name: "State SC Development Corp — UP", type: "SCA", city: "Lucknow", state: "Uttar Pradesh", lat: 26.847, lng: 80.946, npaFlag: false, handles: ["micro","term","education"] },
+  { name: "Baroda UP Bank", type: "RRB", city: "Kanpur", state: "Uttar Pradesh", lat: 26.449, lng: 80.331, npaFlag: false, handles: ["micro","term"] },
+  { name: "NBFC-MFI Uday Credit", type: "NBFC-MFI", city: "Varanasi", state: "Uttar Pradesh", lat: 25.317, lng: 82.973, npaFlag: false, handles: ["micro"] },
+  { name: "State SC Development Corp — Tamil Nadu", type: "SCA", city: "Chennai", state: "Tamil Nadu", lat: 13.082, lng: 80.270, npaFlag: false, handles: ["micro","term","education"] },
+  { name: "Indian Bank — Coimbatore", type: "PSB", city: "Coimbatore", state: "Tamil Nadu", lat: 11.016, lng: 76.955, npaFlag: false, handles: ["term","education"] },
+  { name: "Tamil Nadu Grama Bank", type: "RRB", city: "Madurai", state: "Tamil Nadu", lat: 9.925, lng: 78.119, npaFlag: true, handles: ["micro"] }
+];
+
+function fmt(n) {
+  return "₹" + Number(Math.round(n)).toLocaleString("en-IN");
+}
+
+// Recommend a tier based on category (which corporation), project type, and cost
+function recommendTier(category, input) {
+  const corpKey = ["sc","st","obc","minority"].includes(category) ? category : null;
+  if (!corpKey) return null; // General category has no dedicated corporation
+  const tiers = tiersFor(corpKey);
+  let tier;
+  if (input.isEducation) {
+    tier = tiers.find(t => t.id === "education");
+  } else if (input.cost <= 140000) {
+    tier = tiers.find(t => t.id === "micro");
+  } else {
+    tier = tiers.find(t => t.id === "term");
+  }
+  return { ...tier, corp: CORPORATIONS[corpKey] };
+}
+
+// EMI calculation using standard reducing-balance formula
+function calcEMI(principal, annualRatePct, tenureYears) {
+  const r = annualRatePct / 12 / 100;
+  const n = tenureYears * 12;
+  if (r === 0) return principal / n;
+  const emi = (principal * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+  return emi;
+}
+
+// Haversine distance in km between two lat/lng points
+function distanceKm(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function findPartners(tierId, userLat, userLng, limit) {
+  return PARTNERS
+    .filter(p => p.handles.includes(tierId) && !p.npaFlag)
+    .map(p => ({ ...p, distance: distanceKm(userLat, userLng, p.lat, p.lng) }))
+    .sort((a, b) => a.distance - b.distance)
+    .slice(0, limit || 5);
+}
+
+// City -> approximate lat/lng, used since we don't have live geolocation permission by default
+const CITY_COORDS = {
+  "Jalandhar": [31.326, 75.576], "Ludhiana": [30.901, 75.857], "Amritsar": [31.634, 74.872],
+  "Delhi": [28.644, 77.216], "Mumbai": [19.076, 72.877], "Pune": [18.520, 73.856],
+  "Nashik": [19.997, 73.789], "Lucknow": [26.847, 80.946], "Kanpur": [26.449, 80.331],
+  "Varanasi": [25.317, 82.973], "Chennai": [13.082, 80.270], "Coimbatore": [11.016, 76.955],
+  "Madurai": [9.925, 78.119], "Kapurthala": [31.380, 75.383]
+};
+
+// City -> state, used to surface state-specific schemes automatically
+const STATE_OF_CITY = {
+  "Jalandhar": "Punjab", "Ludhiana": "Punjab", "Amritsar": "Punjab", "Kapurthala": "Punjab",
+  "Delhi": "Delhi",
+  "Mumbai": "Maharashtra", "Pune": "Maharashtra", "Nashik": "Maharashtra",
+  "Lucknow": "Uttar Pradesh", "Kanpur": "Uttar Pradesh", "Varanasi": "Uttar Pradesh",
+  "Chennai": "Tamil Nadu", "Coimbatore": "Tamil Nadu", "Madurai": "Tamil Nadu"
+};
+
+
+// BROADER SCHEME DATABASE
+// Central and state government schemes beyond the NSFDC-family corporations,
+// each with explicit eligibility rules covering category, gender, age, income,
+// business type/stage, and (for state schemes) home state.
+// Simplified for hackathon demonstration — real eligibility should always be
+// confirmed on each scheme's official portal.
+
+const ALL_SCHEMES = [
+  // ---- CENTRAL SCHEMES ----
+  {
+    id: "pmegp", level: "central",
+    name: "PMEGP — Prime Minister's Employment Generation Programme",
+    benefit: "Subsidy up to 35%",
+    description: "Credit-linked subsidy for setting up new manufacturing or service micro-enterprises, run by KVIC.",
+    applyUrl: "https://www.kviconline.gov.in/pmegpeportal/",
+    minAge: 18, maxAge: null, categories: null, genders: null,
+    stages: ["idea","starting"], btypes: ["manufacturing","service","handicraft"],
+    maxFunding: 5000000
+  },
+  {
+    id: "standup", level: "central",
+    name: "Stand-Up India",
+    benefit: "Loan ₹10L–1Cr",
+    description: "Bank loans for SC/ST and women entrepreneurs to set up a new greenfield enterprise.",
+    applyUrl: "https://www.standupmitra.in/",
+    minAge: 18, maxAge: null, categories: ["sc","st"], genders: null, allowIfWoman: true,
+    stages: ["idea","starting"], btypes: null,
+    minFunding: 100000
+  },
+  {
+    id: "mudra", level: "central",
+    name: "PM MUDRA Yojana",
+    benefit: "Collateral-free loan",
+    description: "Loans up to ₹20 lakh for non-farm micro and small enterprises, without collateral.",
+    applyUrl: "https://www.mudra.org.in/",
+    minAge: 18, maxAge: null, categories: null, genders: null,
+    stages: null, btypes: ["manufacturing","service","retail","tech","handicraft"],
+    maxFunding: 2000000
+  },
+  {
+    id: "pmvishwakarma", level: "central",
+    name: "PM Vishwakarma",
+    benefit: "Loan + toolkit support",
+    description: "Skill training, toolkit incentive, and collateral-free loans up to ₹3L for traditional artisans.",
+    applyUrl: "https://pmvishwakarma.gov.in/",
+    minAge: 18, maxAge: null, categories: null, genders: null,
+    stages: null, btypes: ["handicraft"],
+    maxFunding: 300000
+  },
+  {
+    id: "svanidhi", level: "central",
+    name: "PM SVANidhi",
+    benefit: "Micro-loan ₹10K–50K",
+    description: "Working capital loans for street vendors and very small retail/trading businesses.",
+    applyUrl: "https://pmsvanidhi.mohua.gov.in/",
+    minAge: 18, maxAge: null, categories: null, genders: null,
+    stages: null, btypes: ["retail"],
+    maxFunding: 50000
+  },
+  {
+    id: "seedfund", level: "central",
+    name: "Startup India Seed Fund Scheme",
+    benefit: "Seed grant up to ₹50L",
+    description: "Seed funding for early-stage tech/innovative startups for proof of concept and prototyping.",
+    applyUrl: "https://seedfund.startupindia.gov.in/",
+    minAge: 18, maxAge: 45, categories: null, genders: null,
+    stages: ["idea","starting"], btypes: ["tech"]
+  },
+  {
+    id: "mahilaehaat", level: "central",
+    name: "Mahila e-Haat",
+    benefit: "Free online marketplace",
+    description: "A free online platform for women entrepreneurs and artisans to sell products directly to buyers.",
+    applyUrl: "https://mahilaehaat-rmk.gov.in/",
+    minAge: 18, maxAge: null, categories: null, genders: ["woman"],
+    stages: null, btypes: ["handicraft","retail","manufacturing"]
+  },
+  {
+    id: "cgtmse", level: "central",
+    name: "CGTMSE",
+    benefit: "Collateral-free credit guarantee",
+    description: "Credit guarantee to banks so micro/small enterprises can get loans without collateral.",
+    applyUrl: "https://www.cgtmse.in/",
+    minAge: 18, maxAge: null, categories: null, genders: null,
+    stages: ["existing"], btypes: ["manufacturing","service","retail","tech","handicraft"],
+    maxFunding: 20000000
+  },
+  {
+    id: "pmfme", level: "central",
+    name: "PM FME (Food Processing Micro-Enterprises)",
+    benefit: "Subsidy up to 35%",
+    description: "Credit-linked subsidy for micro food processing units to formalise and expand.",
+    applyUrl: "https://pmfme.mofpi.gov.in/",
+    minAge: 18, maxAge: null, categories: null, genders: null,
+    stages: null, btypes: ["agriculture"],
+    maxFunding: 2500000
+  },
+  {
+    id: "udyam", level: "central",
+    name: "Udyam Registration",
+    benefit: "Free MSME status",
+    description: "Free registration that classifies your business as an MSME, unlocking most other scheme benefits.",
+    applyUrl: "https://udyamregistration.gov.in/",
+    minAge: 18, maxAge: null, categories: null, genders: null,
+    stages: null, btypes: null
+  },
+  {
+    id: "tread", level: "central",
+    name: "TREAD Scheme",
+    benefit: "Grant + credit support",
+    description: "Grants and credit support for women entrepreneurs through NGOs, covering training and counselling.",
+    applyUrl: "https://msme.gov.in/",
+    minAge: 18, maxAge: null, categories: null, genders: ["woman"],
+    stages: null, btypes: ["manufacturing","service","retail","handicraft"],
+    maxFunding: 3000000
+  },
+  {
+    id: "seniorcitizen-fitl", level: "central",
+    name: "Senior Citizen FITL / Vayoshreshtha support (via Udyam + concessional bank schemes)",
+    benefit: "Priority-sector lending",
+    description: "Entrepreneurs above 60 can access priority-sector MSME lending at select PSBs with relaxed collateral norms.",
+    applyUrl: "https://msme.gov.in/",
+    minAge: 60, maxAge: null, categories: null, genders: null,
+    stages: null, btypes: null
+  },
+
+  // ---- STATE SCHEMES ----
+  {
+    id: "punjab-ghar-ghar", level: "state", state: "Punjab",
+    name: "Ghar Ghar Rozgar Te Karobar Mission",
+    benefit: "Loan facilitation + training",
+    description: "Punjab's state mission connecting youth to employment and business loan facilitation, including skill counselling.",
+    applyUrl: "https://pgrkam.com/",
+    minAge: 18, maxAge: 45, categories: null, genders: null,
+    stages: ["idea","starting"], btypes: null
+  },
+  {
+    id: "maha-apavim", level: "state", state: "Maharashtra",
+    name: "Annasaheb Patil Arthik Vikas Mahamandal (Interest Subvention Loan)",
+    benefit: "Interest subvention up to ₹10L",
+    description: "Interest subsidy on business loans for OBC/open-category entrepreneurs (SC/ST covered under national corporations).",
+    applyUrl: "https://mahaswayam.gov.in/",
+    minAge: 18, maxAge: 50, categories: ["obc","general"], genders: null,
+    stages: ["idea","starting","existing"], btypes: null,
+    maxFunding: 1000000
+  },
+  {
+    id: "up-mysy", level: "state", state: "Uttar Pradesh",
+    name: "UP Mukhyamantri Yuva Swarojgar Yojana",
+    benefit: "Subsidy + collateral-free loan",
+    description: "Self-employment scheme for UP youth to set up new manufacturing/service ventures with subsidised loans.",
+    applyUrl: "https://msme.up.gov.in/",
+    minAge: 18, maxAge: 40, categories: null, genders: null,
+    stages: ["idea","starting"], btypes: ["manufacturing","service"],
+    maxFunding: 2500000
+  },
+  {
+    id: "tn-needs", level: "state", state: "Tamil Nadu",
+    name: "New Entrepreneur-cum-Enterprise Development Scheme (NEEDS)",
+    benefit: "Subsidy + concessional loan",
+    description: "Supports graduate/diploma entrepreneurs in Tamil Nadu setting up new manufacturing or service enterprises.",
+    applyUrl: "https://www.msmeonline.tn.gov.in/",
+    minAge: 21, maxAge: 35, categories: null, genders: null,
+    stages: ["idea","starting"], btypes: ["manufacturing","service"],
+    maxFunding: 5000000
+  },
+  {
+    id: "delhi-dsmfdc", level: "state", state: "Delhi",
+    name: "Delhi Minorities Finance & Development Corporation Loan Scheme",
+    benefit: "Concessional loan",
+    description: "Low-interest loans for minority entrepreneurs resident in Delhi for small business ventures.",
+    applyUrl: "https://dsmfdc.delhi.gov.in/",
+    minAge: 18, maxAge: null, categories: ["minority"], genders: null,
+    stages: null, btypes: null,
+    maxFunding: 500000
+  },
+
+  // ---- EDUCATION SCHEMES (central) ----
+  // These only appear when the user selects "Education" as the loan purpose.
+  {
+    id: "csss", level: "central", purpose: "education",
+    name: "Central Sector Scheme of Scholarships (CSSS)",
+    benefit: "Scholarship ₹10K–20K/yr",
+    description: "Merit-based scholarship for general-category college/university students from low-income families.",
+    applyUrl: "https://scholarships.gov.in/",
+    minAge: 17, maxAge: 25, categories: ["general"], genders: null,
+    maxIncome: 450000
+  },
+  {
+    id: "pms-sc", level: "central", purpose: "education",
+    name: "Post-Matric Scholarship for SC Students",
+    benefit: "Full fee + maintenance allowance",
+    description: "Covers tuition and maintenance costs for SC students studying post-Class 10 in India.",
+    applyUrl: "https://scholarships.gov.in/",
+    minAge: 15, maxAge: 35, categories: ["sc"], genders: null,
+    maxIncome: 250000
+  },
+  {
+    id: "pms-st", level: "central", purpose: "education",
+    name: "Post-Matric Scholarship for ST Students",
+    benefit: "Full fee + maintenance allowance",
+    description: "Covers tuition and maintenance costs for ST students studying post-Class 10 in India.",
+    applyUrl: "https://scholarships.gov.in/",
+    minAge: 15, maxAge: 35, categories: ["st"], genders: null,
+    maxIncome: 250000
+  },
+  {
+    id: "pms-obc", level: "central", purpose: "education",
+    name: "Post-Matric Scholarship for OBC Students",
+    benefit: "Fee reimbursement + allowance",
+    description: "Covers tuition and maintenance costs for OBC students studying post-Class 10 in India.",
+    applyUrl: "https://scholarships.gov.in/",
+    minAge: 15, maxAge: 35, categories: ["obc"], genders: null,
+    maxIncome: 150000
+  },
+  {
+    id: "pms-minority", level: "central", purpose: "education",
+    name: "Post-Matric Scholarship for Minorities",
+    benefit: "Fee reimbursement + allowance",
+    description: "Covers tuition and maintenance costs for minority-community students studying post-Class 10 in India.",
+    applyUrl: "https://scholarships.gov.in/",
+    minAge: 15, maxAge: 35, categories: ["minority"], genders: null,
+    maxIncome: 200000
+  },
+  {
+    id: "begum-hazrat-mahal", level: "central", purpose: "education",
+    name: "Begum Hazrat Mahal National Scholarship",
+    benefit: "Scholarship for girls",
+    description: "Scholarship for minority-community girl students studying in Class 9–12.",
+    applyUrl: "https://www.momascholarship.gov.in/",
+    minAge: 13, maxAge: 20, categories: ["minority"], genders: ["woman"],
+    maxIncome: 200000
+  },
+  {
+    id: "aicte-pragati", level: "central", purpose: "education",
+    name: "AICTE Pragati Scholarship for Girls",
+    benefit: "₹50,000/year",
+    description: "Scholarship for girl students pursuing technical diploma or degree courses (one per family).",
+    applyUrl: "https://www.aicte-pragati-saksham-gov.in/",
+    minAge: 17, maxAge: 30, categories: null, genders: ["woman"],
+    maxIncome: 800000
+  },
+  {
+    id: "csis", level: "central", purpose: "education",
+    name: "Central Sector Interest Subsidy Scheme (CSIS)",
+    benefit: "Full interest subsidy during moratorium",
+    description: "Interest subsidy on education loans for economically weaker general-category students in professional/technical courses.",
+    applyUrl: "https://www.vidyalakshmi.co.in/",
+    minAge: 17, maxAge: 35, categories: ["general"], genders: null,
+    maxIncome: 450000
+  },
+  {
+    id: "padho-pardesh", level: "central", purpose: "education",
+    name: "Padho Pardesh Interest Subsidy",
+    benefit: "Interest subsidy on overseas study loans",
+    description: "Interest subsidy on education loans for minority-community students pursuing higher studies abroad.",
+    applyUrl: "https://scholarships.gov.in/",
+    minAge: 17, maxAge: 35, categories: ["minority"], genders: null,
+    maxIncome: 600000
+  }
+];
+
+// Eligibility check against a unified user profile. Every scheme is either
+// business-purpose (default, no "purpose" field set) or purpose:"education" —
+// a scheme only shows up on the side (business vs education) that matches
+// what the user selected as their loan purpose.
+function schemeEligible(scheme, u) {
+  const schemeIsEducation = scheme.purpose === "education";
+  if (u.isEducation !== schemeIsEducation && scheme.purpose !== "any") return false;
+  if (scheme.level === "state" && scheme.state !== u.homeState) return false;
+  if (scheme.minAge != null && u.age < scheme.minAge) return false;
+  if (scheme.maxAge != null && u.age > scheme.maxAge) return false;
+  if (scheme.categories && !scheme.categories.includes(u.category)) {
+    if (!(scheme.allowIfWoman && u.gender === "woman")) return false;
+  }
+  if (scheme.genders && !scheme.genders.includes(u.gender)) return false;
+  // stage/btype only apply to business-purpose schemes
+  if (scheme.stages && !schemeIsEducation && !scheme.stages.includes(u.stage)) return false;
+  if (scheme.btypes && !schemeIsEducation && !scheme.btypes.includes(u.btype)) return false;
+  if (scheme.maxFunding != null && u.funding > scheme.maxFunding) return false;
+  if (scheme.minFunding != null && u.funding < scheme.minFunding) return false;
+  if (scheme.maxIncome != null && u.income > scheme.maxIncome) return false;
+  return true;
+}
+
+function findEligibleSchemes(u) {
+  return ALL_SCHEMES.filter(s => {
+    try { return schemeEligible(s, u); } catch (e) { return false; }
+  });
+}
+
+
+// ---------- LANGUAGE ----------
+let LANG = "en";
+
+const STRINGS = {
+  en: {
+    heroTitle: "Find every government scheme you actually qualify for.",
+    step1: "Tell us about you",
+    genderLabel: "Gender", woman: "Woman", man: "Man", otherGender: "Other",
+    ageLabel: "Age",
+    categoryLabel: "Category", general: "General", obc: "OBC", sc: "SC", st: "ST", minority: "Minority",
+    isEducation: "What is this loan for?",
+    project: "A business / project",
+    education: "Education",
+    stageLabel: "Business stage", stageIdea: "Just an idea", stageStarting: "Starting up", stageExisting: "Already running",
+    btypeLabel: "Business type",
+    btypeManufacturing: "Manufacturing", btypeService: "Service", btypeAgriculture: "Agriculture",
+    btypeRetail: "Retail / Trading", btypeTech: "Tech / Digital", btypeHandicraft: "Handicraft / Artisan",
+    btypeOther: "Other", btypeOtherPlaceholder: "e.g. Bakery, Salon, Logistics…",
+    income: "Annual family income (₹)",
+    cost: "Estimated project / course cost (₹)",
+    location: "Nearest city",
+    useLocation: "📍 Use my exact location instead",
+    locatingMsg: "Getting your location…",
+    locatedMsg: "Using your exact location for accurate distances.",
+    locationDeniedMsg: "Couldn't access your location — using the selected city instead.",
+    findBtn: "Find my schemes",
+    incomeWarnCorp: "This corporation's schemes require annual family income up to ₹5,00,000. You may not qualify for the loan tiers below, but you can still see how they work.",
+    eligibleTitle: "schemes you may be eligible for",
+    eligibleSub: "Based on what you entered. Confirm final eligibility on each scheme's official portal before applying.",
+    noEligible: "No matches found — try adjusting your details above (age, category, income, or business type).",
+    central: "Central", state: "State",
+    visitPortal: "Visit official portal →",
+    corpStep: "Your dedicated corporation scheme",
+    recommended: "Recommended for you",
+    subsidyLine: "Covers up to",
+    rateLine: "Interest rate",
+    moratoriumLine: "Moratorium (repayment grace period)",
+    emiTitle: "Estimate your EMI",
+    loanAmount: "Loan amount (₹)",
+    tenure: "Tenure (years)",
+    calcBtn: "Calculate EMI",
+    partnersTitle: "Nearest eligible Channel Partners",
+    partnersSub: "Filtered to partners currently accepting applications for this scheme (excludes partners flagged for high NPAs/overdues).",
+    npaExcluded: "partner(s) nearby were excluded due to high NPA/overdue flags",
+    noPartners: "No eligible partner found nearby for this scheme tier yet.",
+    distance: "away",
+    usingGPSNote: "Using your exact location.",
+    usingCityNote: "Using selected city as your approximate location.",
+    disclaimer: "YojanaSetu is a student prototype for SIH 2026 (NSFDC-family Channel Finance + broader scheme discovery). Figures are simplified for demonstration — always confirm final terms with the relevant department or Channel Partner."
+  },
+  hi: {
+    heroTitle: "हर वह सरकारी योजना खोजें जिसके लिए आप पात्र हैं।",
+    step1: "अपने बारे में बताएं",
+    genderLabel: "लिंग", woman: "महिला", man: "पुरुष", otherGender: "अन्य",
+    ageLabel: "आयु",
+    categoryLabel: "श्रेणी", general: "सामान्य", obc: "OBC", sc: "SC", st: "ST", minority: "अल्पसंख्यक",
+    isEducation: "यह ऋण किसके लिए है?",
+    project: "व्यवसाय / परियोजना",
+    education: "शिक्षा",
+    stageLabel: "व्यवसाय चरण", stageIdea: "सिर्फ एक विचार", stageStarting: "शुरुआत", stageExisting: "पहले से चल रहा है",
+    btypeLabel: "व्यवसाय प्रकार",
+    btypeManufacturing: "विनिर्माण", btypeService: "सेवा", btypeAgriculture: "कृषि",
+    btypeRetail: "खुदरा / व्यापार", btypeTech: "तकनीक / डिजिटल", btypeHandicraft: "हस्तशिल्प / शिल्पकार",
+    btypeOther: "अन्य", btypeOtherPlaceholder: "जैसे बेकरी, सैलून, लॉजिस्टिक्स…",
+    income: "वार्षिक पारिवारिक आय (₹)",
+    cost: "अनुमानित परियोजना / पाठ्यक्रम लागत (₹)",
+    location: "निकटतम शहर",
+    useLocation: "📍 मेरे सटीक स्थान का उपयोग करें",
+    locatingMsg: "आपका स्थान प्राप्त किया जा रहा है…",
+    locatedMsg: "सटीक दूरी के लिए आपके वास्तविक स्थान का उपयोग किया जा रहा है।",
+    locationDeniedMsg: "स्थान प्राप्त नहीं हो सका — चयनित शहर का उपयोग किया जा रहा है।",
+    findBtn: "मेरी योजनाएं खोजें",
+    incomeWarnCorp: "इस निगम की योजनाओं के लिए वार्षिक पारिवारिक आय ₹5,00,000 तक होनी चाहिए। आप निचे दी गई ऋण श्रेणियों के लिए पात्र नहीं हो सकते।",
+    eligibleTitle: "योजनाएं जिनके लिए आप पात्र हो सकते हैं",
+    eligibleSub: "आपके द्वारा दी गई जानकारी के आधार पर। आवेदन से पहले आधिकारिक पोर्टल पर पात्रता अवश्य जांचें।",
+    noEligible: "कोई मेल नहीं मिला — ऊपर दी गई जानकारी (आयु, श्रेणी, आय, या व्यवसाय प्रकार) में बदलाव करें।",
+    central: "केंद्रीय", state: "राज्य",
+    visitPortal: "आधिकारिक पोर्टल पर जाएं →",
+    corpStep: "आपकी समर्पित निगम योजना",
+    recommended: "आपके लिए अनुशंसित",
+    subsidyLine: "कवर करता है",
+    rateLine: "ब्याज दर",
+    moratoriumLine: "अधिस्थगन (राहत अवधि)",
+    emiTitle: "अपनी EMI का अनुमान लगाएं",
+    loanAmount: "ऋण राशि (₹)",
+    tenure: "अवधि (वर्ष)",
+    calcBtn: "EMI की गणना करें",
+    partnersTitle: "निकटतम योग्य चैनल पार्टनर",
+    partnersSub: "उन पार्टनरों तक सीमित जो वर्तमान में आवेदन स्वीकार कर रहे हैं (उच्च NPA वाले पार्टनर शामिल नहीं)।",
+    npaExcluded: "आस-पास के पार्टनर उच्च NPA फ्लैग के कारण बाहर रखे गए",
+    noPartners: "इस श्रेणी के लिए अभी कोई योग्य पार्टनर नहीं मिला।",
+    distance: "दूर",
+    usingGPSNote: "आपके सटीक स्थान का उपयोग किया जा रहा है।",
+    usingCityNote: "अनुमानित स्थान के रूप में चयनित शहर का उपयोग किया जा रहा है।",
+    disclaimer: "YojanaSetu, SIH 2026 के लिए एक छात्र प्रोटोटाइप है। आंकड़े प्रदर्शन के लिए सरल किए गए हैं — कृपया संबंधित विभाग या चैनल पार्टनर से अंतिम शर्तें अवश्य जांचें।"
+  }
+};
+
+function t(key) { return STRINGS[LANG][key]; }
+
+function applyLanguage() {
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t(el.getAttribute("data-i18n")); });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el => { el.placeholder = t(el.getAttribute("data-i18n-placeholder")); });
+}
+
+document.getElementById("langToggle").addEventListener("click", () => {
+  LANG = LANG === "en" ? "hi" : "en";
+  document.getElementById("langToggle").textContent = LANG === "en" ? "हिंदी" : "English";
+  applyLanguage();
+  if (window.__lastUser) {
+    renderEligibleSchemes(window.__lastUser, window.__lastEligible);
+    if (window.__lastTier) renderTier(window.__lastTier, window.__lastIncome);
+    if (window.__lastEMI !== undefined) renderEMI(window.__lastEMI, window.__lastTier, window.__lastAmount, window.__lastYears);
+    if (window.__lastPartners) renderPartners(window.__lastPartners, window.__lastExcluded, window.__lastTier);
+  }
+});
+
+applyLanguage();
+
+// Toggle business-only fields based on loan purpose
+function toggleBusinessFields() {
+  const isEdu = document.querySelector('input[name="need"]:checked')?.value === "education";
+  document.getElementById("businessFields").style.display = isEdu ? "none" : "block";
+  document.getElementById("btypeField").style.display = isEdu ? "none" : "block";
+}
+document.querySelectorAll('input[name="need"]').forEach(el => el.addEventListener("change", toggleBusinessFields));
+toggleBusinessFields();
+
+// Show a free-text box when "Other" business type is picked
+document.querySelectorAll('input[name="btype"]').forEach(el => {
+  el.addEventListener("change", () => {
+    const isOther = document.querySelector('input[name="btype"]:checked')?.value === "other";
+    document.getElementById("btypeOtherField").style.display = isOther ? "block" : "none";
+  });
+});
+
+// ---------- REAL GEOLOCATION ----------
+window.__userCoords = null;
+
+document.getElementById("useLocationBtn").addEventListener("click", () => {
+  const statusEl = document.getElementById("locationStatus");
+  const btn = document.getElementById("useLocationBtn");
+
+  if (!navigator.geolocation) {
+    statusEl.textContent = t("locationDeniedMsg");
+    statusEl.classList.add("error");
+    return;
+  }
+
+  statusEl.textContent = t("locatingMsg");
+  statusEl.classList.remove("error");
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      window.__userCoords = { lat: position.coords.latitude, lng: position.coords.longitude };
+      statusEl.textContent = t("locatedMsg");
+      statusEl.classList.remove("error");
+      btn.classList.add("active");
+      document.getElementById("city").required = false;
+    },
+    () => {
+      window.__userCoords = null;
+      statusEl.textContent = t("locationDeniedMsg");
+      statusEl.classList.add("error");
+      btn.classList.remove("active");
+      document.getElementById("city").required = true;
+    },
+    { enableHighAccuracy: true, timeout: 8000 }
+  );
+});
+
+function getUserCoords() {
+  if (window.__userCoords) return window.__userCoords;
+  const city = window.__userCity;
+  const c = CITY_COORDS[city];
+  return c ? { lat: c[0], lng: c[1] } : null;
+}
+
+// ---------- STEP 1: COLLECT PROFILE + FIND ELIGIBLE SCHEMES ----------
+document.getElementById("needForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const gender = document.querySelector('input[name="gender"]:checked')?.value || null;
+  const category = document.querySelector('input[name="category"]:checked')?.value || null;
+  const isEducation = document.querySelector('input[name="need"]:checked')?.value === "education";
+  const stage = document.querySelector('input[name="stage"]:checked')?.value || null;
+  let btype = document.querySelector('input[name="btype"]:checked')?.value || null;
+  const btypeOtherText = document.getElementById("btypeOtherText").value.trim();
+  const age = Number(document.getElementById("age").value);
+  const income = Number(document.getElementById("income").value);
+  const cost = Number(document.getElementById("cost").value);
+  const city = document.getElementById("city").value;
+
+  if (!category) { alert(LANG === "en" ? "Please select your category." : "कृपया अपनी श्रेणी चुनें।"); return; }
+  if (!gender) { alert(LANG === "en" ? "Please select your gender." : "कृपया अपना लिंग चुनें।"); return; }
+  if (!isEducation && !stage) { alert(LANG === "en" ? "Please select your business stage." : "कृपया अपना व्यवसाय चरण चुनें।"); return; }
+  if (!isEducation && !btype) { alert(LANG === "en" ? "Please select your business type." : "कृपया अपना व्यवसाय प्रकार चुनें।"); return; }
+  if (!isEducation && btype === "other" && !btypeOtherText) { alert(LANG === "en" ? "Please tell us your business type." : "कृपया अपना व्यवसाय प्रकार बताएं।"); return; }
+  if (!city && !window.__userCoords) { alert(LANG === "en" ? "Please select your nearest city, or use your exact location." : "कृपया अपना निकटतम शहर चुनें, या अपने सटीक स्थान का उपयोग करें।"); return; }
+  if (!age || age < 16) { alert(LANG === "en" ? "Please enter a valid age." : "कृपया एक मान्य आयु दर्ज करें।"); return; }
+  if (!income && income !== 0) { alert(LANG === "en" ? "Please enter your annual family income." : "कृपया अपनी वार्षिक पारिवारिक आय दर्ज करें।"); return; }
+  if (!cost || cost <= 0) { alert(LANG === "en" ? "Please enter a valid project/course cost." : "कृपया एक मान्य परियोजना/पाठ्यक्रम लागत दर्ज करें।"); return; }
+
+  const btypeLabel = btype === "other" ? btypeOtherText : btype;
+
+  window.__userCity = city;
+
+  const user = {
+    gender, category, age, income,
+    stage: isEducation ? null : stage,
+    btype: isEducation ? null : btype,
+    btypeLabel: isEducation ? null : btypeLabel,
+    funding: cost,
+    homeState: STATE_OF_CITY[city] || null,
+    isEducation
+  };
+  window.__lastUser = user;
+
+  // ---- Broad eligible-schemes list (central + state) ----
+  const eligible = findEligibleSchemes(user);
+  window.__lastEligible = eligible;
+  renderEligibleSchemes(user, eligible);
+  document.getElementById("eligibleSchemesSection").classList.add("show");
+
+  // ---- Category-specific corporation deep dive (NSFDC/NSTFDC/NBCFDC/NMDFC) ----
+  const tier = recommendTier(category, { isEducation, cost });
+  const corpCard = document.getElementById("corpCard");
+  const emiCard = document.getElementById("emiCard");
+
+  if (tier) {
+    window.__lastTier = tier;
+    window.__lastIncome = income;
+    corpCard.style.display = "block";
+    emiCard.style.display = "block";
+    renderTier(tier, income);
+
+    const suggestedAmount = Math.min(cost, tier.maxAmount);
+    document.getElementById("loanAmount").value = suggestedAmount;
+    document.getElementById("tenureYears").value = Math.min(5, tier.maxTenureYears);
+  } else {
+    window.__lastTier = null;
+    corpCard.style.display = "none";
+    emiCard.style.display = "none";
+  }
+
+  document.getElementById("eligibleSchemesSection").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+function renderEligibleSchemes(user, eligible) {
+  const section = document.getElementById("eligibleSchemesSection");
+  let html = `
+    <div class="eligible-summary">${eligible.length} ${t("eligibleTitle")}</div>
+    <div class="eligible-sub">${t("eligibleSub")}</div>
+  `;
+
+  if (eligible.length === 0) {
+    html += `<div class="no-schemes">${t("noEligible")}</div>`;
+  } else {
+    eligible.forEach(s => {
+      html += `
+        <div class="scheme">
+          <div class="scheme-head">
+            <span class="scheme-name">${s.name}</span>
+            <div class="scheme-badges">
+              <span class="badge-level ${s.level}">${s.level === "central" ? t("central") : t("state")}</span>
+              <span class="badge-benefit">${s.benefit}</span>
+            </div>
+          </div>
+          <div class="scheme-desc">${s.description}</div>
+          <div class="scheme-apply"><a href="${s.applyUrl}" target="_blank" rel="noopener">${t("visitPortal")}</a></div>
+        </div>
+      `;
+    });
+  }
+  section.innerHTML = html;
+}
+
+function renderTier(tier, income) {
+  const box = document.getElementById("tierResult");
+  box.classList.add("show");
+  const warn = income > 500000
+    ? `<div class="warn-box" style="display:block;">${t("incomeWarnCorp")}</div>`
+    : "";
+  box.innerHTML = `
+    <div class="result-label">${t("recommended")} — ${tier.corp.shortName} (${tier.corp.fullName[LANG]})</div>
+    <div class="tier-name">${tier.name[LANG]}</div>
+    <div class="tier-desc">${tier.desc[LANG]}</div>
+    <div class="tier-stats">
+      <div class="stat"><span class="stat-num">${fmt(tier.maxAmount)}</span><span class="stat-label">${LANG === "en" ? "Maximum loan" : "अधिकतम ऋण"}</span></div>
+      <div class="stat"><span class="stat-num">${tier.rate}%</span><span class="stat-label">${t("rateLine")}</span></div>
+      <div class="stat"><span class="stat-num">${tier.moratoriumMonths} ${LANG === "en" ? "mo" : "माह"}</span><span class="stat-label">${t("moratoriumLine")}</span></div>
+      <div class="stat"><span class="stat-num">${tier.subsidyPct}%</span><span class="stat-label">${t("subsidyLine")}</span></div>
+    </div>
+    ${warn}
+  `;
+  document.getElementById("emiTitle").textContent = t("emiTitle");
+  document.getElementById("emiCalcBtn").textContent = t("calcBtn");
+}
+
+// ---------- EMI CALCULATOR ----------
+document.getElementById("emiForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const tier = window.__lastTier;
+  if (!tier) return;
+
+  let amount = Number(document.getElementById("loanAmount").value);
+  let years = Number(document.getElementById("tenureYears").value);
+
+  amount = Math.min(amount, tier.maxAmount);
+  years = Math.min(Math.max(years, 1), tier.maxTenureYears);
+
+  const emi = calcEMI(amount, tier.rate, years);
+  window.__lastEMI = emi;
+  window.__lastAmount = amount;
+  window.__lastYears = years;
+
+  renderEMI(emi, tier, amount, years);
+  document.getElementById("emiResult").classList.add("show");
+
+  showPartners(tier);
+});
+
+function renderEMI(emi, tier, amount, years) {
+  amount = amount || window.__lastAmount;
+  years = years || window.__lastYears;
+  const box = document.getElementById("emiResult");
+  box.innerHTML = `
+    <div class="emi-amount">${fmt(emi)}<span class="emi-permonth">/${LANG === "en" ? "month" : "माह"}</span></div>
+    <div class="emi-detail">${fmt(amount)} ${LANG === "en" ? "over" : "पर,"} ${years} ${LANG === "en" ? "years at" : "वर्ष,"} ${tier.rate}% ${LANG === "en" ? "p.a." : "प्रति वर्ष"}</div>
+    <div class="emi-moratorium">${LANG === "en" ? `First EMI due after the ${tier.moratoriumMonths}-month moratorium period.` : `पहली EMI ${tier.moratoriumMonths} माह की अधिस्थगन अवधि के बाद देय होगी।`}</div>
+  `;
+}
+
+// ---------- PARTNER LOCATOR ----------
+function showPartners(tier) {
+  const coords = getUserCoords();
+  if (!coords) return;
+
+  const allEligible = PARTNERS.filter(p => p.handles.includes(tier.id));
+  const excludedCount = allEligible.filter(p => p.npaFlag).length;
+  const partners = findPartners(tier.id, coords.lat, coords.lng, 5);
+
+  window.__lastPartners = partners;
+  window.__lastExcluded = excludedCount;
+
+  renderPartners(partners, excludedCount, tier);
+  document.getElementById("partnersSection").classList.add("show");
+  document.getElementById("partnersSection").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function renderPartners(partners, excludedCount, tier) {
+  const section = document.getElementById("partnersSection");
+  const typeLabel = { SCA: "State Channelizing Agency", PSB: "Public Sector Bank", RRB: "Regional Rural Bank", "NBFC-MFI": "NBFC-MFI" };
+  const usingGPS = !!window.__userCoords;
+
+  let html = `
+    <h2>${t("partnersTitle")} — ${tier.corp.shortName}</h2>
+    <p class="partners-sub">${t("partnersSub")}</p>
+    <p class="partners-sub" style="margin-top:4px;font-weight:600;">${usingGPS ? "📍 " + t("usingGPSNote") : t("usingCityNote")}</p>
+  `;
+
+  if (excludedCount > 0) {
+    html += `<div class="npa-note">${excludedCount} ${t("npaExcluded")}</div>`;
+  }
+
+  if (partners.length === 0) {
+    html += `<div class="no-partners">${t("noPartners")}</div>`;
+  } else {
+    html += `<div class="partner-list">`;
+    partners.forEach(p => {
+      html += `
+        <div class="partner">
+          <div class="partner-head">
+            <span class="partner-name">${p.name}</span>
+            <span class="partner-type">${p.type}</span>
+          </div>
+          <div class="partner-meta">${typeLabel[p.type]} · ${p.city}, ${p.state} · ${p.distance.toFixed(0)} km ${t("distance")}</div>
+        </div>
+      `;
+    });
+    html += `</div>`;
+  }
+
+  section.innerHTML = html;
+}
+
+</script>
+</body>
+</html>
