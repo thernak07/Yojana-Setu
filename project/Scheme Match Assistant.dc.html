@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,300&display=swap" />
+<style>
+  body { margin: 0; background: #0a0a0b; }
+  * { box-sizing: border-box; }
+  a { color: #f0a72b; text-decoration: none; }
+  a:hover { color: #ffc45c; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: #2a2a30; border-radius: 8px; border: 3px solid #0a0a0b; }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes cardIn { from { opacity: 0; transform: translateY(14px) scale(.985); } to { opacity: 1; transform: none; } }
+  @keyframes blip { 0%, 80%, 100% { opacity: .25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+  @keyframes ripple { from { transform: scale(1); opacity: .5; } to { transform: scale(2.4); opacity: 0; } }
+  @keyframes drift { 0% { transform: translate3d(-4%, -2%, 0) scale(1); } 50% { transform: translate3d(4%, 3%, 0) scale(1.12); } 100% { transform: translate3d(-4%, -2%, 0) scale(1); } }
+  @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+  @keyframes caret { 50% { opacity: 0; } }
+  @keyframes panelIn { from { opacity: 0; transform: translateY(18px) scale(.99); } to { opacity: 1; transform: none; } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</helmet>
+<div style="position: relative; height: 100dvh; min-height: 480px; display: flex; flex-direction: column; background: #0a0a0b; color: #f4efe6; font-family: Manrope, system-ui, sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden;">
+
+  <div style="position: absolute; inset: -20% -10% auto -10%; height: 70vh; pointer-events: none; background: radial-gradient(38% 46% at 22% 18%, rgba(240,167,43,.13), transparent 70%), radial-gradient(34% 40% at 78% 10%, rgba(120,150,255,.08), transparent 70%); filter: blur(10px); animation: drift 26s ease-in-out infinite;"></div>
+
+  <header style="position: relative; z-index: 3; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 14px 22px; border-bottom: 1px solid #1e1e23; background: rgba(10,10,11,.72); backdrop-filter: blur(8px);">
+    <div onClick="{{ goLanding }}" style="display: flex; align-items: center; gap: 11px; cursor: pointer;">
+      <div style="width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(145deg, #f0a72b, #c07d12); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #241703;">से</div>
+      <div style="display: flex; flex-direction: column; gap: 1px;">
+        <div style="font-family: Newsreader, Georgia, serif; font-size: 19px; line-height: 1.1; letter-spacing: .2px;">Setu</div>
+        <div style="font-size: 10px; letter-spacing: .09em; text-transform: uppercase; color: #8d867c;">Ministry of Social Justice &amp; Empowerment</div>
+      </div>
+    </div>
+    <div style="flex: 1 1 40px;"></div>
+
+    <sc-if value="{{ onApp }}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <span style="font-size: 11.5px; color: #8d867c; letter-spacing: .04em;">Profile</span>
+        <div style="width: 96px; height: 6px; border-radius: 99px; background: #1e1e23; overflow: hidden;">
+          <div style="height: 100%; border-radius: 99px; background: linear-gradient(90deg, #c07d12, #f0a72b); width: {{ completion }}%; transition: width .6s cubic-bezier(.2,.8,.2,1);"></div>
+        </div>
+        <span style="font-size: 11.5px; font-variant-numeric: tabular-nums; color: #f0a72b; min-width: 28px;">{{ completionLabel }}</span>
+      </div>
+    </sc-if>
+
+    <div style="display: flex; align-items: center; gap: 7px;">
+      <div title="{{ engineTitle }}" style="display: flex; align-items: center; gap: 6px; padding: 6px 11px; border-radius: 99px; border: 1px solid #26262c; background: #101013;">
+        <span style="width: 6px; height: 6px; border-radius: 99px; background: {{ engineDot }};"></span>
+        <span style="font: 600 11px Manrope, sans-serif; letter-spacing: .04em; color: #a8a19a;">{{ engineLabel }}</span>
+      </div>
+      <button onClick="{{ reset }}" style="border: 1px solid #2a2a30; background: #131316; color: #cfc7bb; font: 500 12px Manrope, sans-serif; padding: 7px 12px; border-radius: 99px; cursor: pointer;" style-hover="border-color: #3a3a42; color: #f4efe6;">New chat</button>
+      <button style="border: 1px solid #2a2a30; background: #131316; color: #cfc7bb; font: 500 12px Manrope, sans-serif; padding: 7px 12px; border-radius: 99px; cursor: pointer;" style-hover="border-color: #3a3a42; color: #f4efe6;">EN · हिं</button>
+    </div>
+  </header>
+
+  <sc-if value="{{ onLanding }}" hint-placeholder-val="{{ true }}">
+    <div style="position: relative; flex: 1 1 0; min-height: 0; overflow-y: auto;">
+      <div style="max-width: 1120px; margin: 0 auto; padding: clamp(36px, 7vh, 84px) clamp(20px, 5vw, 48px) 72px;">
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: clamp(28px, 5vw, 60px); align-items: center;">
+          <div style="animation: rise .6s ease both;">
+            <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 13px; border-radius: 99px; border: 1px solid #3a2c0f; background: #16130c; font: 600 11.5px Manrope, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: #f0a72b; margin-bottom: 22px;">AI scheme matching · open to every entrepreneur</div>
+            <h1 style="font-family: Newsreader, Georgia, serif; font-weight: 300; font-size: clamp(34px, 5.4vw, 62px); line-height: 1.06; letter-spacing: -1px; margin: 0 0 18px;">Say what you want to build.<br />Setu finds the scheme.</h1>
+            <p style="margin: 0 0 30px; max-width: 50ch; font-size: 16.5px; line-height: 1.62; color: #a09a91; text-wrap: pretty;">India runs hundreds of credit, subsidy and skilling schemes across ministries. Almost nobody can name the three that fit them. Setu asks a handful of plain questions and ranks every route you qualify for &mdash; universal schemes first, with SC, ST, OBC, Divyangjan, Safai Karamchari, transgender and women&rsquo;s routes layered on where they apply.</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+              <button onClick="{{ goApp }}" style="height: 50px; padding: 0 26px; border-radius: 99px; border: 0; background: linear-gradient(145deg, #f0a72b, #d4901c); color: #211502; font: 700 15px Manrope, sans-serif; cursor: pointer; transition: filter .16s ease, transform .16s ease;" style-hover="filter: brightness(1.1); transform: translateY(-1px);">Start matching &nbsp;&rarr;</button>
+              <button onClick="{{ runDemo }}" style="height: 50px; padding: 0 22px; border-radius: 99px; border: 1px solid #2c2c33; background: transparent; color: #ded7cc; font: 600 14px Manrope, sans-serif; cursor: pointer;" style-hover="border-color: #f0a72b; color: #f0a72b;">Watch a 30-second demo</button>
+            </div>
+          </div>
+
+          <div style="animation: rise .7s .1s ease both;">
+            <div style="border: 1px solid #1f1f25; background: #0e0e11; border-radius: 20px; overflow: hidden; box-shadow: 0 40px 80px -50px rgba(0,0,0,.9);">
+              <div style="display: flex; align-items: center; gap: 7px; padding: 12px 15px; border-bottom: 1px solid #1a1a1f;">
+                <span style="width: 8px; height: 8px; border-radius: 99px; background: #2f2f37;"></span>
+                <span style="width: 8px; height: 8px; border-radius: 99px; background: #2f2f37;"></span>
+                <span style="font-size: 11px; color: #6e685f; margin-left: 6px;">setu.gov.in / match</span>
+              </div>
+              <div style="padding: 18px; display: flex; flex-direction: column; gap: 14px;">
+                <div style="display: flex; justify-content: flex-end;">
+                  <div style="max-width: 80%; background: #17171b; border: 1px solid #24242a; padding: 10px 14px; border-radius: 14px 14px 4px 14px; font-size: 13.5px; line-height: 1.5;">I want to start a tailoring unit. I have no collateral.</div>
+                </div>
+                <div style="display: flex; gap: 11px;">
+                  <div style="flex: none; width: 22px; height: 22px; border-radius: 7px; border: 1px solid #3a2c0f; background: #1a1408; display: flex; align-items: center; justify-content: center; margin-top: 2px;">
+                    <div style="width: 6px; height: 6px; border-radius: 99px; background: #f0a72b;"></div>
+                  </div>
+                  <div style="font-size: 13.5px; line-height: 1.6; color: #e7e1d7;">Collateral is solvable &mdash; CGTMSE guarantees loans without it. How much do you need to get going?</div>
+                </div>
+                <div style="border: 1px solid #1f1f25; background: #101013; border-radius: 14px; padding: 13px; display: flex; gap: 11px; align-items: center;">
+                  <div style="flex: none; width: 40px; height: 40px; border-radius: 99px; background: conic-gradient(#f0a72b 320deg, rgba(255,255,255,.07) 0); display: flex; align-items: center; justify-content: center;">
+                    <div style="width: 31px; height: 31px; border-radius: 99px; background: #101013; display: flex; align-items: center; justify-content: center; font: 700 11px Manrope, sans-serif; color: #f0a72b;">89%</div>
+                  </div>
+                  <div style="min-width: 0;">
+                    <div style="font-size: 13.5px; font-weight: 600;">PM MUDRA Yojana &mdash; Kishor</div>
+                    <div style="font-size: 11px; color: #8d867c; margin-top: 2px;">Dept. of Financial Services · ₹50k&ndash;₹5 lakh</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height: 1px; background: #1a1a1f; margin: clamp(44px, 8vh, 76px) 0 clamp(30px, 5vh, 48px);"></div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 22px;">
+          <sc-for list="{{ howItWorks }}" as="h" hint-placeholder-count="4">
+            <div style="animation: rise .6s ease both;">
+              <div style="font-family: Newsreader, Georgia, serif; font-size: 30px; line-height: 1; color: #f0a72b; margin-bottom: 12px;">{{ h.n }}</div>
+              <div style="font-size: 15px; font-weight: 600; margin-bottom: 7px;">{{ h.title }}</div>
+              <p style="margin: 0; font-size: 13.5px; line-height: 1.6; color: #918a80; text-wrap: pretty;">{{ h.body }}</p>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="margin-top: clamp(40px, 7vh, 68px); border: 1px solid #1f1f25; background: #0d0d10; border-radius: 20px; padding: clamp(22px, 3vw, 32px);">
+          <div style="font-family: Newsreader, Georgia, serif; font-size: 22px; margin-bottom: 6px;">Built to be checkable, not just confident</div>
+          <p style="margin: 0 0 22px; max-width: 62ch; font-size: 14px; line-height: 1.6; color: #918a80; text-wrap: pretty;">Scheme rules change and money is at stake, so the assistant never hands over a verdict alone.</p>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 16px;">
+            <sc-for list="{{ guardrails }}" as="g" hint-placeholder-count="4">
+              <div style="border: 1px solid #1c1c22; background: #101013; border-radius: 14px; padding: 15px;">
+                <div style="font-size: 13.5px; font-weight: 600; margin-bottom: 6px; color: #f4efe6;">{{ g.title }}</div>
+                <div style="font-size: 12.5px; line-height: 1.55; color: #8d867c;">{{ g.body }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="margin-top: 34px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+          <span style="font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: #6e685f; margin-right: 4px;">Covers</span>
+          <sc-for list="{{ coverage }}" as="c" hint-placeholder-count="8">
+            <span style="font: 500 12px Manrope, sans-serif; padding: 6px 11px; border-radius: 99px; border: 1px solid #1f1f25; background: #101013; color: #a8a19a;">{{ c.text }}</span>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ onApp }}" hint-placeholder-val="{{ false }}">
+    <main style="position: relative; flex: 1 1 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, min(420px, 34%)); grid-auto-rows: minmax(0, 1fr); min-height: 0; overflow: hidden;">
+
+      <section style="min-width: 0; display: flex; flex-direction: column; min-height: 0; overflow: hidden; border-right: 1px solid #1e1e23;">
+        <div ref="{{ scrollRef }}" style="flex: 1 1 0; min-height: 0; overflow-y: auto; padding: 32px clamp(18px, 4.5vw, 50px) 8px;">
+          <div style="max-width: 720px; margin: 0 auto; min-height: 0; display: flex; flex-direction: column; gap: 24px;">
+
+            <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ true }}">
+              <div style="padding: clamp(0px, 3vh, 40px) 0 0; animation: rise .6s ease both;">
+                <h1 style="font-family: Newsreader, Georgia, serif; font-weight: 300; font-size: clamp(28px, 4.2vw, 44px); line-height: 1.12; margin: 0 0 12px; letter-spacing: -.4px;">What are you building?</h1>
+                <p style="margin: 0 0 26px; max-width: 48ch; font-size: 15.5px; line-height: 1.6; color: #a09a91; text-wrap: pretty;">Tell me in your own words &mdash; trade, town, how much you need. I&rsquo;ll ask a few short questions and rank the schemes that fit.</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                  <sc-for list="{{ starters }}" as="s" hint-placeholder-count="4">
+                    <button onClick="{{ s.send }}" style="text-align: left; border: 1px solid #24242a; background: #101013; color: #ded7cc; font: 500 13.5px Manrope, sans-serif; padding: 12px 15px; border-radius: 13px; cursor: pointer; max-width: 320px; line-height: 1.4; transition: all .18s ease;" style-hover="border-color: #f0a72b; background: #16130c; color: #fff;">{{ s.text }}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-for list="{{ messages }}" as="m" hint-placeholder-count="0">
+              <div style="animation: rise .45s cubic-bezier(.2,.8,.2,1) both;">
+                <sc-if value="{{ m.isUser }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; justify-content: flex-end;">
+                    <div style="max-width: 78%; background: #17171b; border: 1px solid #24242a; padding: 12px 16px; border-radius: 16px 16px 4px 16px; font-size: 15px; line-height: 1.55; color: #f4efe6;">{{ m.text }}</div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ m.isBot }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; gap: 14px;">
+                    <div style="flex: none; width: 26px; height: 26px; border-radius: 8px; border: 1px solid #3a2c0f; background: #1a1408; display: flex; align-items: center; justify-content: center; margin-top: 2px;">
+                      <div style="width: 7px; height: 7px; border-radius: 99px; background: #f0a72b;"></div>
+                    </div>
+                    <div style="min-width: 0; font-size: 15.5px; line-height: 1.68; color: #e7e1d7; white-space: pre-wrap; text-wrap: pretty;">{{ m.text }}<sc-if value="{{ m.streaming }}" hint-placeholder-val="{{ false }}"><span style="display: inline-block; width: 8px; height: 16px; margin-left: 3px; vertical-align: -2px; background: #f0a72b; animation: caret 1s steps(1) infinite;"></span></sc-if></div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ m.isNote }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; gap: 10px; align-items: center; padding: 10px 13px; border-radius: 12px; border: 1px solid #33291a; background: #14110b; font-size: 12.5px; line-height: 1.5; color: #c9ab74;">{{ m.text }}</div>
+                </sc-if>
+              </div>
+            </sc-for>
+
+            <sc-if value="{{ thinking }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; gap: 14px; align-items: center; animation: rise .3s ease both;">
+                <div style="flex: none; width: 26px; height: 26px; border-radius: 8px; border: 1px solid #3a2c0f; background: #1a1408; display: flex; align-items: center; justify-content: center;">
+                  <div style="width: 7px; height: 7px; border-radius: 99px; background: #f0a72b;"></div>
+                </div>
+                <div style="display: flex; gap: 5px;">
+                  <span style="width: 6px; height: 6px; border-radius: 99px; background: #f0a72b; animation: blip 1.1s ease-in-out infinite;"></span>
+                  <span style="width: 6px; height: 6px; border-radius: 99px; background: #f0a72b; animation: blip 1.1s ease-in-out .16s infinite;"></span>
+                  <span style="width: 6px; height: 6px; border-radius: 99px; background: #f0a72b; animation: blip 1.1s ease-in-out .32s infinite;"></span>
+                </div>
+                <span style="font-size: 12.5px; color: #7d766c; letter-spacing: .02em;">{{ thinkingLabel }}</span>
+              </div>
+            </sc-if>
+
+            <div style="height: 10px;"></div>
+          </div>
+        </div>
+
+        <div style="padding: 8px clamp(18px, 4.5vw, 50px) 20px; background: linear-gradient(transparent, #0a0a0b 42%);">
+          <div style="max-width: 720px; margin: 0 auto;">
+            <sc-if value="{{ hasHints }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; flex-wrap: wrap; gap: 7px; align-items: center; padding: 0 4px 10px;">
+                <span style="font-size: 11px; color: #6e685f; letter-spacing: .06em; text-transform: uppercase;">Try</span>
+                <sc-for list="{{ hints }}" as="h" hint-placeholder-count="0">
+                  <button onClick="{{ h.fill }}" style="border: 1px dashed #2c2c33; background: transparent; color: #989186; font: 500 12.5px Manrope, sans-serif; padding: 6px 11px; border-radius: 99px; cursor: pointer; transition: all .16s ease;" style-hover="border-color: #f0a72b; color: #f0a72b; border-style: solid;">{{ h.text }}</button>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <div style="display: flex; align-items: flex-end; gap: 10px; border: 1px solid #26262c; background: #101013; border-radius: 20px; padding: 10px 10px 10px 18px; box-shadow: 0 18px 40px -28px rgba(0,0,0,.9);">
+              <input value="{{ draft }}" onChange="{{ onDraft }}" onKeyDown="{{ onKey }}" placeholder="{{ placeholder }}" style="flex: 1; min-width: 0; border: 0; outline: none; background: transparent; color: #f4efe6; font: 400 15.5px Manrope, sans-serif; padding: 9px 0;" />
+              <button onClick="{{ toggleVoice }}" title="Speak your answer" style="position: relative; flex: none; width: 40px; height: 40px; border-radius: 99px; border: 1px solid #2a2a30; background: #17171b; color: #b9b1a5; cursor: pointer; display: flex; align-items: center; justify-content: center;" style-hover="border-color: #3a3a42; color: #f4efe6;">
+                <sc-if value="{{ listening }}" hint-placeholder-val="{{ false }}">
+                  <span style="position: absolute; inset: 0; border-radius: 99px; border: 1px solid #f0a72b; animation: ripple 1.5s ease-out infinite;"></span>
+                </sc-if>
+                <span style="display: block; width: 9px; height: 15px; border-radius: 99px; background: currentColor;"></span>
+              </button>
+              <button onClick="{{ send }}" style="flex: none; height: 40px; padding: 0 20px; border-radius: 99px; border: 0; background: linear-gradient(145deg, #f0a72b, #d4901c); color: #211502; font: 700 13.5px Manrope, sans-serif; cursor: pointer; transition: filter .16s ease;" style-hover="filter: brightness(1.12);">Send</button>
+            </div>
+            <div style="padding: 9px 6px 0; font-size: 11.5px; color: #6e685f;">Setu can be wrong about scheme rules &mdash; confirm final eligibility with the implementing agency before you pay any fee.</div>
+          </div>
+        </div>
+      </section>
+
+      <aside style="min-width: 0; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: #0c0c0e;">
+        <div style="display: flex; align-items: baseline; gap: 9px; padding: 18px 20px 13px; border-bottom: 1px solid #1a1a1f;">
+          <span style="font-family: Newsreader, Georgia, serif; font-size: 18px;">Live matches</span>
+          <span style="font-size: 11.5px; color: #7d766c; font-variant-numeric: tabular-nums;">{{ matchCountLabel }}</span>
+        </div>
+
+        <div style="flex: 1 1 0; min-height: 0; overflow-y: auto; padding: 14px 16px 26px; display: flex; flex-direction: column; gap: 12px;">
+
+          <sc-if value="{{ hasProfile }}" hint-placeholder-val="{{ false }}">
+            <div style="border: 1px solid #1c1c22; background: #0f0f12; border-radius: 14px; padding: 12px 13px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 9px;">
+                <span style="font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: #6e685f;">What Setu knows</span>
+                <span style="font-size: 11px; color: #6e685f;">tap to correct</span>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                <sc-for list="{{ profileChips }}" as="c" hint-placeholder-count="0">
+                  <button onClick="{{ c.edit }}" style="display: flex; align-items: baseline; gap: 6px; border: 1px solid #24242a; background: #141418; border-radius: 99px; padding: 5px 11px; cursor: pointer; font: 500 12px Manrope, sans-serif; color: #ded7cc;" style-hover="border-color: #f0a72b;">
+                    <span style="color: #7d766c; font-size: 10.5px; letter-spacing: .04em; text-transform: uppercase;">{{ c.label }}</span>
+                    <span>{{ c.value }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ noMatches }}" hint-placeholder-val="{{ true }}">
+            <div style="padding: 6px 4px;">
+              <p style="margin: 0 0 18px; font-size: 13.5px; line-height: 1.6; color: #8d867c; text-wrap: pretty;">Schemes rank here as you answer &mdash; fit score, what you meet, what is missing, and how sure the assistant is.</p>
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <sc-for list="{{ ghosts }}" as="g" hint-placeholder-count="3">
+                  <div style="height: 78px; border-radius: 14px; border: 1px solid #17171c; background: linear-gradient(100deg, #101013 25%, #16161b 50%, #101013 75%); background-size: 200% 100%; animation: shimmer 2.6s linear infinite;"></div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-for list="{{ matches }}" as="s" hint-placeholder-count="0">
+            <div style="border: 1px solid #1f1f25; background: #101013; border-radius: 16px; padding: 14px 14px 12px; animation: cardIn .5s cubic-bezier(.2,.8,.2,1) both;">
+              <div onClick="{{ s.open }}" style="display: flex; gap: 12px; align-items: flex-start; cursor: pointer;">
+                <div style="flex: none; width: 46px; height: 46px; border-radius: 99px; background: conic-gradient(#f0a72b {{ s.deg }}deg, rgba(255,255,255,.07) 0); display: flex; align-items: center; justify-content: center;">
+                  <div style="width: 36px; height: 36px; border-radius: 99px; background: #101013; display: flex; align-items: center; justify-content: center; font: 700 12px Manrope, sans-serif; font-variant-numeric: tabular-nums; color: #f0a72b;">{{ s.fitLabel }}</div>
+                </div>
+                <div style="min-width: 0; flex: 1;">
+                  <div style="font-size: 14.5px; font-weight: 600; line-height: 1.35; color: #f4efe6; text-wrap: pretty;">{{ s.name }}</div>
+                  <div style="font-size: 11.5px; color: #8d867c; margin-top: 3px;">{{ s.agency }}</div>
+                </div>
+              </div>
+
+              <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 11px;">
+                <span style="font: 700 10.5px Manrope, sans-serif; letter-spacing: .07em; text-transform: uppercase; padding: 4px 9px; border-radius: 99px; color: {{ s.statusColor }}; background: {{ s.statusBg }};">{{ s.status }}</span>
+                <span style="font: 600 11.5px Manrope, sans-serif; padding: 4px 9px; border-radius: 99px; color: #ded7cc; background: #191920;">{{ s.amount }}</span>
+                <span style="font: 500 11.5px Manrope, sans-serif; padding: 4px 9px; border-radius: 99px; color: #98918e; background: #191920;">{{ s.deadline }}</span>
+                <sc-if value="{{ s.showConfidence }}" hint-placeholder-val="{{ false }}">
+                  <span title="{{ s.confidenceNote }}" style="font: 500 11.5px Manrope, sans-serif; padding: 4px 9px; border-radius: 99px; color: #98918e; background: #191920;">{{ s.confidenceLabel }}</span>
+                </sc-if>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 5px; margin-top: 11px; padding-top: 10px; border-top: 1px solid #1b1b21;">
+                <sc-for list="{{ s.criteria }}" as="c" hint-placeholder-count="2">
+                  <div style="display: flex; gap: 8px; align-items: baseline; font-size: 12.5px; line-height: 1.45;">
+                    <span style="flex: none; width: 12px; text-align: center; font-weight: 700; color: {{ c.color }};">{{ c.mark }}</span>
+                    <span style="color: #a8a19a;">{{ c.label }}</span>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 11px;">
+                <button onClick="{{ s.open }}" style="border: 1px solid #2a2a30; background: #16161b; color: #ded7cc; font: 600 11.5px Manrope, sans-serif; padding: 6px 11px; border-radius: 99px; cursor: pointer;" style-hover="border-color: #f0a72b; color: #f0a72b;">Details</button>
+                <button onClick="{{ s.why }}" style="border: 1px solid #2a2a30; background: #16161b; color: #ded7cc; font: 600 11.5px Manrope, sans-serif; padding: 6px 11px; border-radius: 99px; cursor: pointer;" style-hover="border-color: #f0a72b; color: #f0a72b;">{{ s.whyLabel }}</button>
+                <button onClick="{{ s.apply }}" style="border: 0; background: #2a2109; color: #f0a72b; font: 700 11.5px Manrope, sans-serif; padding: 6px 11px; border-radius: 99px; cursor: pointer;" style-hover="background: #38290a;">Draft application</button>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </aside>
+
+      <sc-if value="{{ panelOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position: absolute; inset: 0; z-index: 6; display: flex; justify-content: flex-end; background: rgba(6,6,7,.62); backdrop-filter: blur(3px); animation: fadeIn .22s ease both;">
+          <div onClick="{{ closePanel }}" style="flex: 1; cursor: pointer;"></div>
+          <div style="flex: none; width: min(660px, 100%); display: flex; flex-direction: column; min-height: 0; background: #0c0c0e; border-left: 1px solid #23232a; box-shadow: -40px 0 90px -40px rgba(0,0,0,.9); animation: panelIn .3s cubic-bezier(.2,.8,.2,1) both;">
+
+            <div style="flex: none; display: flex; align-items: flex-start; gap: 14px; padding: 20px 22px 15px; border-bottom: 1px solid #1a1a1f;">
+              <div style="min-width: 0; flex: 1;">
+                <div style="font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: #f0a72b; margin-bottom: 6px;">{{ panelKind }}</div>
+                <div style="font-family: Newsreader, Georgia, serif; font-size: clamp(20px, 2.6vw, 27px); line-height: 1.18; text-wrap: pretty;">{{ panelTitle }}</div>
+                <div style="font-size: 12px; color: #8d867c; margin-top: 5px;">{{ panelSub }}</div>
+              </div>
+              <button onClick="{{ closePanel }}" style="flex: none; width: 34px; height: 34px; border-radius: 99px; border: 1px solid #2a2a30; background: #131316; color: #cfc7bb; font: 400 17px Manrope, sans-serif; line-height: 1; cursor: pointer;" style-hover="border-color: #3a3a42; color: #fff;">×</button>
+            </div>
+
+            <sc-if value="{{ panelTabsOn }}" hint-placeholder-val="{{ false }}">
+              <div style="flex: none; display: flex; gap: 6px; padding: 12px 22px 0;">
+                <sc-for list="{{ panelTabs }}" as="t" hint-placeholder-count="0">
+                  <button onClick="{{ t.pick }}" style="border: 1px solid {{ t.border }}; background: {{ t.bg }}; color: {{ t.color }}; font: 600 12.5px Manrope, sans-serif; padding: 7px 14px; border-radius: 99px; cursor: pointer;">{{ t.label }}</button>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <div style="flex: 1 1 0; min-height: 0; overflow-y: auto; padding: 20px 22px 28px;">
+
+              <sc-if value="{{ panelLoading }}" hint-placeholder-val="{{ true }}">
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                  <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; color: #8d867c;">
+                    <span style="width: 14px; height: 14px; border-radius: 99px; border: 2px solid #2a2a30; border-top-color: #f0a72b; animation: spin .8s linear infinite;"></span>
+                    {{ panelLoadingLabel }}
+                  </div>
+                  <sc-for list="{{ ghosts }}" as="g" hint-placeholder-count="3">
+                    <div style="height: 64px; border-radius: 14px; border: 1px solid #17171c; background: linear-gradient(100deg, #101013 25%, #16161b 50%, #101013 75%); background-size: 200% 100%; animation: shimmer 2.6s linear infinite;"></div>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <sc-for list="{{ panelBlocks }}" as="b" hint-placeholder-count="0">
+                <div style="margin-bottom: 22px; animation: rise .4s ease both;">
+                  <sc-if value="{{ b.hasHeading }}" hint-placeholder-val="{{ false }}">
+                    <div style="font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #6e685f; margin-bottom: 11px;">{{ b.heading }}</div>
+                  </sc-if>
+
+                  <sc-if value="{{ b.isProse }}" hint-placeholder-val="{{ false }}">
+                    <p style="margin: 0; font-size: 14.5px; line-height: 1.68; color: #ded7cc; white-space: pre-wrap; text-wrap: pretty;">{{ b.text }}</p>
+                  </sc-if>
+
+                  <sc-if value="{{ b.isFacts }}" hint-placeholder-val="{{ false }}">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 10px;">
+                      <sc-for list="{{ b.items }}" as="f" hint-placeholder-count="0">
+                        <div style="border: 1px solid #1c1c22; background: #101013; border-radius: 13px; padding: 12px 13px;">
+                          <div style="font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: #6e685f; margin-bottom: 5px;">{{ f.label }}</div>
+                          <div style="font-size: 14px; font-weight: 600; color: #f4efe6; line-height: 1.35; text-wrap: pretty;">{{ f.value }}</div>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ b.isChecks }}" hint-placeholder-val="{{ false }}">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                      <sc-for list="{{ b.items }}" as="c" hint-placeholder-count="0">
+                        <div style="display: flex; gap: 11px; align-items: baseline; border: 1px solid #1c1c22; background: #101013; border-radius: 12px; padding: 11px 13px;">
+                          <span style="flex: none; width: 14px; text-align: center; font-weight: 700; color: {{ c.color }};">{{ c.mark }}</span>
+                          <div style="min-width: 0;">
+                            <div style="font-size: 13.5px; line-height: 1.5; color: #ded7cc; text-wrap: pretty;">{{ c.label }}</div>
+                            <sc-if value="{{ c.hasNote }}" hint-placeholder-val="{{ false }}">
+                              <div style="font-size: 12px; line-height: 1.5; color: #8d867c; margin-top: 4px;">{{ c.note }}</div>
+                            </sc-if>
+                          </div>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ b.isSteps }}" hint-placeholder-val="{{ false }}">
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                      <sc-for list="{{ b.items }}" as="s" hint-placeholder-count="0">
+                        <div style="display: flex; gap: 12px; align-items: baseline;">
+                          <span style="flex: none; width: 22px; height: 22px; border-radius: 99px; border: 1px solid #3a2c0f; background: #16130c; color: #f0a72b; font: 700 11px Manrope, sans-serif; display: flex; align-items: center; justify-content: center;">{{ s.n }}</span>
+                          <div style="font-size: 13.5px; line-height: 1.6; color: #ded7cc; text-wrap: pretty;">{{ s.text }}</div>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ b.isFields }}" hint-placeholder-val="{{ false }}">
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                      <sc-for list="{{ b.items }}" as="f" hint-placeholder-count="0">
+                        <label style="display: flex; flex-direction: column; gap: 5px;">
+                          <span style="font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: #6e685f;">{{ f.label }}</span>
+                          <input value="{{ f.value }}" onChange="{{ f.onChange }}" style="border: 1px solid #24242a; background: #101013; border-radius: 11px; padding: 11px 13px; color: #f4efe6; font: 400 14px Manrope, sans-serif; outline: none;" style-focus="border-color: #f0a72b;" />
+                        </label>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ b.isLetter }}" hint-placeholder-val="{{ false }}">
+                    <textarea value="{{ b.text }}" onChange="{{ b.onChange }}" style="width: 100%; min-height: 360px; border: 1px solid #24242a; background: #0f0f12; border-radius: 14px; padding: 18px; color: #e7e1d7; font: 400 14px/1.75 Newsreader, Georgia, serif; outline: none; resize: vertical;" style-focus="border-color: #f0a72b;"></textarea>
+                  </sc-if>
+
+                  <sc-if value="{{ b.isDocs }}" hint-placeholder-val="{{ false }}">
+                    <div style="display: flex; flex-direction: column; gap: 9px;">
+                      <sc-for list="{{ b.items }}" as="d" hint-placeholder-count="0">
+                        <div style="display: flex; gap: 12px; align-items: center; border: 1px solid #1c1c22; background: #101013; border-radius: 13px; padding: 12px 13px;">
+                          <button onClick="{{ d.toggle }}" style="flex: none; width: 22px; height: 22px; border-radius: 7px; border: 1px solid {{ d.boxBorder }}; background: {{ d.boxBg }}; color: #211502; font: 700 12px Manrope, sans-serif; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center;">{{ d.tick }}</button>
+                          <div style="min-width: 0; flex: 1;">
+                            <div style="font-size: 13.5px; line-height: 1.45; color: #ded7cc; text-wrap: pretty;">{{ d.label }}</div>
+                            <div style="font-size: 11.5px; color: #7d766c; margin-top: 3px;">{{ d.note }}</div>
+                          </div>
+                          <button onClick="{{ d.toggle }}" style="flex: none; border: 1px solid #2a2a30; background: #16161b; color: #cfc7bb; font: 600 11.5px Manrope, sans-serif; padding: 6px 11px; border-radius: 99px; cursor: pointer;" style-hover="border-color: #f0a72b; color: #f0a72b;">{{ d.action }}</button>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ b.isCaution }}" hint-placeholder-val="{{ false }}">
+                    <div style="border: 1px solid #33291a; background: #14110b; border-radius: 13px; padding: 13px 15px; font-size: 12.5px; line-height: 1.6; color: #c9ab74; text-wrap: pretty;">{{ b.text }}</div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+
+            <sc-if value="{{ panelActionsOn }}" hint-placeholder-val="{{ false }}">
+              <div style="flex: none; display: flex; flex-wrap: wrap; gap: 9px; padding: 14px 22px; border-top: 1px solid #1a1a1f; background: #0d0d10;">
+                <sc-for list="{{ panelActions }}" as="a" hint-placeholder-count="0">
+                  <button onClick="{{ a.run }}" style="border: 1px solid {{ a.border }}; background: {{ a.bg }}; color: {{ a.color }}; font: 700 12.5px Manrope, sans-serif; padding: 10px 16px; border-radius: 99px; cursor: pointer;" style-hover="filter: brightness(1.12);">{{ a.label }}</button>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+    </main>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;model&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;claude-haiku-4-5&quot;,&quot;claude-sonnet-4-5&quot;],&quot;default&quot;:&quot;claude-haiku-4-5&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;AI&quot;},&quot;showConfidence&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;AI&quot;}}">
+const FIELDS = [
+  ['sector', 'Work'], ['capital', 'Needs'], ['state', 'State'], ['category', 'Category'],
+  ['gender', 'Identity'], ['age', 'Age'], ['income', 'Income'], ['registered', 'Registered'], ['disability', 'Disability'],
+];
+
+const SYSTEM = `You are Setu, an AI scheme-matching assistant built for India's Ministry of Social Justice & Empowerment. You help ANY entrepreneur in India — the general public included — find government schemes: credit, subsidy, guarantee, skilling and equity programmes from any ministry or state.
+
+Rules:
+1. Lead with schemes open to everyone (PM MUDRA, PMEGP, CGTMSE, Stand-Up India, PM Vishwakarma, Startup India Seed Fund, state MSME schemes). Treat SC/ST/OBC, Divyangjan, Safai Karamchari, transgender and women's routes as ADDITIONAL eligibility layered on top — never as a gate. Never imply someone with no reserved category is ineligible for help.
+2. Every turn: call the tool update_matches FIRST with your updated profile and full ranked list, then write your chat reply.
+3. Ask exactly ONE question per reply. Short, plain English at a 6th-grade reading level, warm, no jargon, no bullet lists. Under 55 words. Never ask something already known.
+4. Ask in this rough order: what the business is, how much money is needed, which state, then category/gender/age/income/registration/disability as needed. Say plainly that category questions are optional and only unlock extra routes.
+5. Set every criterion's state honestly: "met", "missed" or "unknown". Use "unknown" for anything the user has not told you — never guess. Only mark a scheme not_eligible when a hard rule is genuinely broken.
+6. You are reasoning from memory of scheme rules that change often. Set confidence low or medium whenever you are unsure of a limit, and put a short caution in confidence_note. Always name the implementing agency or ministry.
+7. Never invent application fees, deadlines you don't know (use "Rolling" or "Check portal"), or guaranteed approval.
+8. Write plain sentences only. Never use markdown: no asterisks, bold, italics, headings, backticks, bullet points or numbered lists. Scheme names appear as ordinary words.`;
+
+const TOOL = {
+  name: 'update_matches',
+  description: 'Record the applicant profile and the ranked scheme matches. Call this before every reply.',
+  input_schema: {
+    type: 'object',
+    properties: {
+      profile: {
+        type: 'object', description: 'Only fields the user has actually told you.',
+        properties: {
+          sector: { type: 'string' }, capital: { type: 'string' }, state: { type: 'string' },
+          category: { type: 'string' }, gender: { type: 'string' }, age: { type: 'string' },
+          income: { type: 'string' }, registered: { type: 'string' }, disability: { type: 'string' },
+        },
+      },
+      matches: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            agency: { type: 'string', description: 'Implementing agency and ministry.' },
+            amount: { type: 'string' },
+            deadline: { type: 'string' },
+            fit: { type: 'integer', description: '0-100 fit score.' },
+            status: { type: 'string', enum: ['eligible', 'likely', 'needs_info', 'not_eligible'] },
+            confidence: { type: 'string', enum: ['high', 'medium', 'low'] },
+            confidence_note: { type: 'string', description: 'Short caution if confidence is not high.' },
+            criteria: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: { label: { type: 'string' }, state: { type: 'string', enum: ['met', 'missed', 'unknown'] } },
+                required: ['label', 'state'],
+              },
+            },
+          },
+          required: ['name', 'agency', 'fit', 'status', 'criteria'],
+        },
+      },
+    },
+    required: ['matches'],
+  },
+};
+
+const DEMO = [
+  'I want to start a tailoring unit but I have no collateral',
+  'About 3 lakh. I am in Nashik, Maharashtra.',
+  'I am a woman, 34 years old. Not registered yet.',
+];
+
+class Component extends DCLogic {
+  state = {
+    view: 'landing', messages: [], draft: '', thinking: false, thinkLabel: 'Thinking',
+    listening: false, profile: {}, matches: [], hints: [], engine: 'checking',
+    panel: null, panelTab: 0, panelLoading: false, panelData: null, docs: {}, editDraft: null,
+  };
+  scrollRef = React.createRef();
+  timers = [];
+  turns = [];
+
+  componentDidMount() {
+    const ok = typeof window !== 'undefined' && window.claude && typeof window.claude.complete === 'function';
+    this.setState({ engine: ok ? 'ai' : 'offline' });
+  }
+  componentDidUpdate(pp, ps) {
+    const el = this.scrollRef.current;
+    if (el && (ps.messages !== this.state.messages || ps.thinking !== this.state.thinking)) el.scrollTop = el.scrollHeight;
+  }
+  componentWillUnmount() { this.timers.forEach(clearTimeout); if (this.stage) clearInterval(this.stage); }
+  later(fn, ms) { const t = setTimeout(fn, ms); this.timers.push(t); return t; }
+
+  /* ---------- chat ---------- */
+
+  stripMd(t) {
+    return String(t || '')
+      .replace(/```[a-z]*\n?/gi, '').replace(/`/g, '')
+      .replace(/\*\*([^*]+)\*\*/g, '$1').replace(/__([^_]+)__/g, '$1')
+      .replace(/(^|\s)\*([^*\n]+)\*/g, '$1$2')
+      .replace(/^\s*[#>]+\s*/gm, '').replace(/^\s*[-*•]\s+/gm, '');
+  }
+
+  stream(raw) {
+    const full = this.stripMd(raw);
+    const id = 'b' + Date.now() + Math.random();
+    this.setState(s => ({ messages: [...s.messages, { key: id, isBot: true, text: '', streaming: true }] }));
+    let i = 0;
+    const tick = () => {
+      i = Math.min(full.length, i + 3);
+      this.setState(s => ({ messages: s.messages.map(m => m.key === id ? { ...m, text: full.slice(0, i), streaming: i < full.length } : m) }));
+      if (i < full.length) this.later(tick, 16);
+    };
+    this.later(tick, 30);
+  }
+
+  note(text) {
+    this.setState(s => ({ messages: [...s.messages, { key: 'n' + Date.now(), isNote: true, text }] }));
+  }
+
+  applyTool(input) {
+    const profile = { ...this.state.profile, ...(input.profile || {}) };
+    const matches = (input.matches || []).filter(m => m && m.name).slice(0, 8);
+    this.setState({ profile, matches });
+  }
+
+  async push(text) {
+    const t = (text || '').trim();
+    if (!t || this.state.thinking) return;
+    this.setState(s => ({ messages: [...s.messages, { key: 'u' + Date.now(), isUser: true, text: t }], draft: '', hints: [] }));
+    this.turns.push({ role: 'user', content: t });
+    await this.ask();
+  }
+
+  stageLabels(labels) {
+    if (this.stage) clearInterval(this.stage);
+    let i = 0;
+    this.setState({ thinkLabel: labels[0] });
+    this.stage = setInterval(() => {
+      i = Math.min(labels.length - 1, i + 1);
+      this.setState({ thinkLabel: labels[i] });
+      if (i === labels.length - 1) { clearInterval(this.stage); this.stage = null; }
+    }, 2600);
+  }
+
+  async ask() {
+    const known = Object.keys(this.state.profile).length;
+    this.setState({ thinking: true });
+    this.stageLabels(known
+      ? ['Reading your answer', 'Checking scheme rules', 'Re-ranking your matches', 'Almost there']
+      : ['Reading your answer', 'Searching central and state schemes', 'Scoring eligibility', 'Almost there']);
+    if (this.state.engine !== 'ai') { this.later(() => this.offlineReply(), 700); return; }
+    try {
+      const tool = { ...TOOL, run: async (input) => { this.applyTool(input); return 'recorded'; } };
+      const reply = await window.claude.complete({
+        model: this.props.model || 'claude-haiku-4-5',
+        system: SYSTEM,
+        max_tokens: 1400,
+        tools: [tool],
+        messages: this.turns.slice(-14),
+      });
+      const clean = this.stripMd((reply || '').trim()) || 'I have updated the ranking on the right. What else can you tell me?';
+      this.turns.push({ role: 'assistant', content: clean });
+      if (this.stage) { clearInterval(this.stage); this.stage = null; }
+      this.setState({ thinking: false, hints: this.suggest() });
+      this.stream(clean);
+    } catch (e) {
+      if (this.stage) { clearInterval(this.stage); this.stage = null; }
+      this.setState({ thinking: false, engine: 'offline' });
+      this.note('Live AI is unavailable right now, so Setu switched to its built-in rule engine. Matching still works.');
+      this.later(() => this.offlineReply(), 400);
+    }
+  }
+
+  suggest() {
+    const p = this.state.profile;
+    const pool = [];
+    if (!p.capital) pool.push('About ₹2 lakh', '₹15 lakh');
+    if (!p.state) pool.push('I am in Bihar');
+    if (!p.category) pool.push('None of these categories', 'OBC');
+    if (!p.registered) pool.push('Not registered yet');
+    if (this.state.matches.length) pool.push('Why did the top one drop?');
+    return pool.slice(0, 3);
+  }
+
+  /* ---------- offline fallback ---------- */
+
+  offlineReply() {
+    const last = [...this.state.messages].reverse().find(m => m.isUser);
+    const p = { ...this.state.profile };
+    const t = ((last && last.text) || '').toLowerCase();
+    if (/lakh|crore|thousand|₹|\d{4,}/.test(t) && !p.capital) p.capital = (t.match(/[^.!?]*(?:lakh|crore|thousand|₹|\d{4,})[^.!?]*/) || [t])[0].trim();
+    if (/\b(sc|st|obc|general|none)\b/.test(t) && !p.category) p.category = (t.match(/\b(sc|st|obc|general|none)\b/) || [])[0];
+    if (/\b(woman|women|female|mahila)\b/.test(t)) p.gender = 'woman';
+    if (!p.sector) p.sector = t.slice(0, 44);
+    const base = [
+      { name: 'PM MUDRA Yojana — Kishor', agency: 'Dept. of Financial Services · any scheduled bank', amount: '₹50k – ₹5 lakh', deadline: 'Rolling', fit: 84, status: 'likely', confidence: 'medium', criteria: [{ label: 'Non-farm micro enterprise', state: 'met' }, { label: 'Credit need up to ₹5 lakh', state: p.capital ? 'met' : 'unknown' }, { label: 'Age 18 and above', state: p.age ? 'met' : 'unknown' }] },
+      { name: 'PMEGP margin money subsidy', agency: 'KVIC · Ministry of MSME', amount: 'up to ₹50 lakh project', deadline: 'Rolling', fit: 76, status: 'likely', confidence: 'medium', criteria: [{ label: 'New unit, not already subsidised', state: 'unknown' }, { label: 'Age 18 and above', state: p.age ? 'met' : 'unknown' }] },
+      { name: 'CGTMSE collateral-free guarantee', agency: 'Ministry of MSME', amount: 'cover up to ₹5 cr', deadline: 'Rolling', fit: 71, status: 'needs_info', confidence: 'medium', criteria: [{ label: 'Micro or small enterprise', state: 'met' }, { label: 'Udyam registration', state: p.registered ? 'met' : 'unknown' }] },
+      { name: 'Stand-Up India', agency: 'SIDBI · scheduled commercial banks', amount: '₹10 lakh – ₹1 cr', deadline: 'Rolling', fit: 58, status: 'needs_info', confidence: 'medium', criteria: [{ label: 'SC, ST or woman promoter', state: p.gender === 'woman' || ['sc', 'st'].includes(p.category) ? 'met' : 'unknown' }, { label: 'Loan need ₹10 lakh or more', state: 'unknown' }] },
+    ];
+    this.setState({ profile: p, matches: base, thinking: false, hints: this.suggest() });
+    const q = !p.capital ? 'How much money do you need to get going? A rough figure is fine.'
+      : !p.state ? 'Which state are you in? Several schemes are run by the state government.'
+      : !p.category ? 'This part is optional — do you belong to SC, ST, OBC or a Safai Karamchari family? It only unlocks extra routes; nothing is lost if not.'
+      : 'Noted. Open any scheme on the right to see its rules, documents and how to apply.';
+    this.stream(q);
+  }
+
+  /* ---------- panels ---------- */
+
+  async openPanel(kind, scheme) {
+    this.setState({ panel: { kind, scheme }, panelTab: 0, panelData: null, panelLoading: true });
+    if (this.state.engine !== 'ai') { this.later(() => this.setState({ panelLoading: false, panelData: this.offlinePanel(kind, scheme) }), 500); return; }
+    const p = JSON.stringify(this.state.profile);
+    const prompts = {
+      detail: `Scheme: "${scheme.name}" (${scheme.agency}). Applicant profile JSON: ${p}.
+Return ONLY JSON, no prose, shape:
+{"summary":"2 sentences plain English","facts":[{"label":"Benefit","value":""},{"label":"Interest","value":""},{"label":"Tenure","value":""},{"label":"Agency","value":""}],"eligibility":[{"label":"","state":"met|missed|unknown","note":"why, referencing the profile"}],"documents":["..."],"steps":["how to apply, in order"],"caution":"what may have changed or must be verified with the agency"}`,
+      draft: `Draft an application for "${scheme.name}" (${scheme.agency}) for this applicant: ${p}.
+Return ONLY JSON, shape:
+{"fields":[{"label":"Applicant name","value":""},{"label":"Enterprise name","value":""}],"letter":"a printable business-case letter addressed to the branch manager or agency, 220-300 words, first person, plain English, with placeholders in [square brackets] for anything unknown","caution":"what the applicant must fill or verify"}
+Include 8-12 fields covering identity, enterprise, project cost, means of finance and category.`,
+      docs: `List the documents needed to apply for "${scheme.name}" (${scheme.agency}) given this applicant: ${p}.
+Return ONLY JSON, shape: {"documents":[{"label":"","note":"where to get it or who issues it"}],"caution":"..."}`,
+    };
+    try {
+      const raw = await window.claude.complete({ model: this.props.model || 'claude-haiku-4-5', max_tokens: 1800, system: 'You answer with strict JSON only. No markdown fences, no commentary. You reason from memory of Indian government scheme rules, which change often — flag anything uncertain in the caution field.', messages: [{ role: 'user', content: prompts[kind] }] });
+      const m = (raw || '').match(/\{[\s\S]*\}/);
+      const data = m ? JSON.parse(m[0]) : null;
+      if (!data) throw new Error('bad json');
+      this.setState({ panelLoading: false, panelData: data });
+    } catch (e) {
+      this.setState({ panelLoading: false, panelData: this.offlinePanel(kind, scheme), engine: this.state.engine === 'ai' ? 'ai' : 'offline' });
+    }
+  }
+
+  offlinePanel(kind, scheme) {
+    if (kind === 'draft') return {
+      fields: [
+        { label: 'Applicant name', value: '[your full name]' }, { label: 'Enterprise name', value: '[enterprise name]' },
+        { label: 'Scheme applied for', value: scheme.name }, { label: 'Implementing agency', value: scheme.agency },
+        { label: 'Project cost', value: String(this.state.profile.capital || '[amount]') },
+        { label: 'Own contribution', value: '[10% of project cost]' }, { label: 'Loan requested', value: '[amount]' },
+        { label: 'State / district', value: String(this.state.profile.state || '[state]') },
+        { label: 'Category', value: String(this.state.profile.category || 'General') },
+        { label: 'Udyam registration no.', value: '[if registered]' },
+      ],
+      letter: `To\nThe Branch Manager\n[Bank / ${scheme.agency}]\n\nSubject: Application under ${scheme.name}\n\nSir/Madam,\n\nI wish to set up [enterprise name] at [address]. The unit will [describe the work in one line], serving [who your customers are]. I have [experience / training] in this trade.\n\nThe total project cost is [amount], of which I will contribute [amount] from my own savings. I request assistance of [amount] under ${scheme.name}. The unit is expected to generate a monthly turnover of about [amount] from month [n], which comfortably covers the proposed instalment.\n\nAll supporting documents are enclosed. I request you to consider my application.\n\nYours faithfully,\n[Name]\n[Phone] · [Address]`,
+      caution: 'Generated offline from a template. Replace every bracketed placeholder and confirm the current limits with the agency before submitting.',
+    };
+    if (kind === 'docs') return {
+      documents: [
+        { label: 'Aadhaar card', note: 'Identity and address proof' },
+        { label: 'PAN card', note: 'Income Tax Department' },
+        { label: 'Passport photographs', note: 'Two recent, signed' },
+        { label: 'Project report / cost estimate', note: 'Machinery quotations, working capital estimate' },
+        { label: 'Bank statement (6 months)', note: 'Your bank branch' },
+        { label: 'Udyam registration', note: 'udyamregistration.gov.in — free' },
+        { label: 'Caste or disability certificate', note: 'Tehsil office — only if claiming a reserved route' },
+      ],
+      caution: 'Indicative list. The branch or agency may ask for more.',
+    };
+    return {
+      summary: `${scheme.name} is administered by ${scheme.agency}. Benefit: ${scheme.amount || 'see portal'}.`,
+      facts: [{ label: 'Benefit', value: scheme.amount || '—' }, { label: 'Deadline', value: scheme.deadline || 'Rolling' }, { label: 'Agency', value: scheme.agency }],
+      eligibility: (scheme.criteria || []).map(c => ({ label: c.label, state: c.state, note: '' })),
+      documents: ['Aadhaar', 'PAN', 'Project report', 'Bank statement'],
+      steps: ['Keep your documents ready', 'Apply on the scheme portal or at a bank branch', 'Track the application and respond to queries'],
+      caution: 'Offline summary. Verify current terms with the implementing agency.',
+    };
+  }
+
+  askWhy(scheme) {
+    this.setState({ view: 'app' });
+    this.push(`Explain how you scored ${scheme.name} — which criteria I meet, which I miss, and what would raise it.`);
+  }
+
+  /* ---------- panel view model ---------- */
+
+  panelVM() {
+    const st = this.state, panel = st.panel;
+    if (!panel) return { panelOpen: false, panelBlocks: [], panelTabs: [], panelActions: [] };
+    const s = panel.scheme, d = st.panelData || {};
+    const kindLabel = { detail: 'Scheme detail', draft: 'Application draft', docs: 'Document checklist' }[panel.kind];
+    const markOf = (state) => state === 'met' ? { mark: '✓', color: '#5ec27a' } : state === 'missed' ? { mark: '✕', color: '#d9663f' } : { mark: '?', color: '#7d766c' };
+    const blocks = [];
+    const B = (o) => blocks.push({ key: 'b' + blocks.length, hasHeading: !!o.heading, ...o });
+
+    if (!st.panelLoading) {
+      if (panel.kind === 'detail') {
+        if (d.summary) B({ isProse: true, text: d.summary });
+        if (d.facts) B({ heading: 'At a glance', isFacts: true, items: d.facts.map((f, i) => ({ key: i, label: f.label, value: String(f.value) })) });
+        if (d.eligibility) B({ heading: 'Eligibility, checked against your profile', isChecks: true, items: d.eligibility.map((c, i) => ({ key: i, label: c.label, note: c.note || '', hasNote: !!c.note, ...markOf(c.state) })) });
+        if (d.steps) B({ heading: 'How to apply', isSteps: true, items: d.steps.map((t, i) => ({ key: i, n: i + 1, text: t })) });
+        if (d.documents) B({ heading: 'Documents', isDocs: true, items: this.docRows(d.documents) });
+        if (d.caution) B({ heading: 'Verify before you act', isCaution: true, text: d.caution });
+      } else if (panel.kind === 'draft') {
+        if (st.panelTab === 0) {
+          if (d.fields) B({ heading: 'Form data — edit anything', isFields: true, items: d.fields.map((f, i) => ({
+            key: i, label: f.label, value: String(f.value == null ? '' : f.value),
+            onChange: (e) => { const v = e.target.value; this.setState(s2 => ({ panelData: { ...s2.panelData, fields: s2.panelData.fields.map((x, j) => j === i ? { ...x, value: v } : x) } })); },
+          })) });
+        } else {
+          B({ heading: 'Business-case letter — print and carry', isLetter: true, text: String(d.letter || ''), onChange: (e) => { const v = e.target.value; this.setState(s2 => ({ panelData: { ...s2.panelData, letter: v } })); } });
+        }
+        if (d.caution) B({ isCaution: true, text: d.caution });
+      } else {
+        if (d.documents) B({ heading: 'Collect these', isDocs: true, items: this.docRows(d.documents) });
+        if (d.caution) B({ isCaution: true, text: d.caution });
+      }
+    }
+
+    const tab = (i, label) => ({ key: i, label, pick: () => this.setState({ panelTab: i }),
+      border: st.panelTab === i ? '#f0a72b' : '#26262c', bg: st.panelTab === i ? '#16130c' : '#101013', color: st.panelTab === i ? '#f0a72b' : '#a8a19a' });
+
+    return {
+      panelOpen: true, panelKind: kindLabel, panelTitle: s.name, panelSub: s.agency,
+      panelLoading: st.panelLoading,
+      panelLoadingLabel: panel.kind === 'draft' ? 'Drafting your application…' : panel.kind === 'docs' ? 'Building your checklist…' : 'Reading the scheme rules…',
+      panelBlocks: blocks,
+      panelTabsOn: panel.kind === 'draft' && !st.panelLoading,
+      panelTabs: [tab(0, 'Form data'), tab(1, 'Letter')],
+      panelActionsOn: !st.panelLoading,
+      panelActions: (panel.kind === 'detail' ? [
+        { key: 'a', label: 'Draft my application', run: () => this.openPanel('draft', s), border: 'transparent', bg: '#f0a72b', color: '#211502' },
+        { key: 'b', label: 'Document checklist', run: () => this.openPanel('docs', s), border: '#2a2a30', bg: '#131316', color: '#ded7cc' },
+        { key: 'c', label: 'Ask why this scored ' + (s.fit || 0) + '%', run: () => { this.closePanel(); this.askWhy(s); }, border: '#2a2a30', bg: '#131316', color: '#ded7cc' },
+      ] : panel.kind === 'draft' ? [
+        { key: 'a', label: 'Print / save as PDF', run: () => window.print(), border: 'transparent', bg: '#f0a72b', color: '#211502' },
+        { key: 'b', label: 'Document checklist', run: () => this.openPanel('docs', s), border: '#2a2a30', bg: '#131316', color: '#ded7cc' },
+        { key: 'c', label: 'Back to scheme', run: () => this.openPanel('detail', s), border: '#2a2a30', bg: '#131316', color: '#ded7cc' },
+      ] : [
+        { key: 'a', label: 'Draft my application', run: () => this.openPanel('draft', s), border: 'transparent', bg: '#f0a72b', color: '#211502' },
+        { key: 'b', label: 'Back to scheme', run: () => this.openPanel('detail', s), border: '#2a2a30', bg: '#131316', color: '#ded7cc' },
+      ]),
+    };
+  }
+
+  docRows(list) {
+    return list.map((raw, i) => {
+      const label = typeof raw === 'string' ? raw : raw.label;
+      const note = typeof raw === 'string' ? 'Keep a self-attested copy' : (raw.note || '');
+      const have = !!this.state.docs[label];
+      return { key: i, label, note, tick: have ? '✓' : '', have,
+        boxBorder: have ? '#f0a72b' : '#2a2a30', boxBg: have ? '#f0a72b' : '#131316',
+        action: have ? 'Ready' : 'Mark ready',
+        toggle: () => this.setState(s => ({ docs: { ...s.docs, [label]: !s.docs[label] } })) };
+    });
+  }
+
+  /* ---------- render values ---------- */
+
+  renderVals() {
+    const st = this.state, p = st.profile;
+    const filled = FIELDS.filter(f => p[f[0]] !== undefined && p[f[0]] !== '').length;
+    const completion = Math.round((filled / FIELDS.length) * 100);
+    const showConf = this.props.showConfidence !== false;
+
+    const statusMap = {
+      eligible: ['Eligible', '#7de29a', 'rgba(94,194,122,.13)'],
+      likely: ['Likely', '#f0a72b', 'rgba(240,167,43,.12)'],
+      needs_info: ['Needs more info', '#9d968c', 'rgba(255,255,255,.06)'],
+      not_eligible: ['Not eligible', '#e0836a', 'rgba(217,102,63,.12)'],
+    };
+
+    const matches = [...st.matches].sort((a, b) => (b.fit || 0) - (a.fit || 0)).map((m, i) => {
+      const sm = statusMap[m.status] || statusMap.needs_info;
+      const fit = Math.max(0, Math.min(100, Math.round(m.fit || 0)));
+      const conf = m.confidence || 'medium';
+      return {
+        key: m.name + i, name: m.name, agency: m.agency, amount: m.amount || 'See portal', deadline: m.deadline || 'Rolling',
+        fit, fitLabel: fit + '%', deg: Math.round(fit * 3.6),
+        status: sm[0], statusColor: sm[1], statusBg: sm[2],
+        showConfidence: showConf && conf !== 'high',
+        confidenceLabel: conf === 'low' ? 'verify with agency' : 'medium confidence',
+        confidenceNote: m.confidence_note || 'Scheme limits change — confirm with the implementing agency.',
+        criteria: (m.criteria || []).slice(0, 4).map((c, j) => ({
+          key: j, label: c.label,
+          mark: c.state === 'met' ? '✓' : c.state === 'missed' ? '✕' : '?',
+          color: c.state === 'met' ? '#5ec27a' : c.state === 'missed' ? '#d9663f' : '#7d766c',
+        })),
+        whyLabel: 'Why ' + fit + '%?',
+        open: () => this.openPanel('detail', m),
+        apply: () => this.openPanel('draft', m),
+        why: () => this.askWhy(m),
+      };
+    });
+
+    const chipVal = (k, v) => k === 'capital' || k === 'income' ? String(v) : String(v);
+
+    return {
+      onLanding: st.view === 'landing', onApp: st.view === 'app',
+      goApp: () => this.setState({ view: 'app' }),
+      goLanding: () => this.setState({ view: 'landing', panel: null }),
+      runDemo: () => {
+        this.setState({ view: 'app', messages: [], profile: {}, matches: [], panel: null });
+        this.turns = [];
+        DEMO.forEach((t, i) => this.later(() => this.push(t), 400 + i * 5200));
+      },
+      engineLabel: st.engine === 'ai' ? 'Live AI' : st.engine === 'offline' ? 'Offline rules' : 'Starting',
+      engineDot: st.engine === 'ai' ? '#5ec27a' : st.engine === 'offline' ? '#d9a03f' : '#7d766c',
+      engineTitle: st.engine === 'ai' ? 'Answers and rankings are generated live by a language model' : 'Falling back to the built-in rule engine',
+
+      completion, completionLabel: completion + '%',
+      scrollRef: this.scrollRef,
+      messages: st.messages, isEmpty: st.messages.length === 0,
+      thinking: st.thinking, thinkingLabel: st.thinkLabel,
+      draft: st.draft,
+      placeholder: st.messages.length ? 'Type your answer…' : 'e.g. I want to start a tailoring unit in Nashik',
+      listening: st.listening,
+      onDraft: (e) => this.setState({ draft: e.target.value }),
+      onKey: (e) => { if (e.key === 'Enter') this.push(st.draft); },
+      send: () => this.push(st.draft),
+      toggleVoice: () => this.setState(s => ({ listening: !s.listening })),
+      reset: () => { this.turns = []; this.setState({ messages: [], profile: {}, matches: [], hints: [], draft: '', panel: null, docs: {} }); },
+
+      hints: st.hints.map((t, i) => ({ key: i, text: t, fill: () => this.push(t) })),
+      hasHints: st.hints.length > 0 && !st.thinking,
+      starters: [
+        'I want to start a tailoring unit but have no collateral',
+        'I run a kirana shop and need ₹3 lakh to expand',
+        'I am a potter — anything for artisans?',
+        'Which schemes are open to everyone, no category needed?',
+      ].map((t, i) => ({ key: i, text: t, send: () => this.push(t) })),
+
+      matches, noMatches: matches.length === 0,
+      matchCountLabel: matches.length ? matches.length + ' ranked' : 'nothing yet',
+      hasProfile: Object.keys(p).length > 0,
+      profileChips: FIELDS.filter(f => p[f[0]] !== undefined && p[f[0]] !== '').map(f => ({
+        key: f[0], label: f[1], value: chipVal(f[0], p[f[0]]),
+        edit: () => this.setState({ draft: 'Correction: my ' + f[1].toLowerCase() + ' is ' }),
+      })),
+      ghosts: [{ key: 1 }, { key: 2 }, { key: 3 }],
+
+      howItWorks: [
+        { key: 1, n: '01', title: 'Say it in your own words', body: 'No forms, no scheme names. “I want to start a tailoring unit” is enough to begin.' },
+        { key: 2, n: '02', title: 'One question at a time', body: 'The assistant asks only what changes the answer, and says which questions are optional.' },
+        { key: 3, n: '03', title: 'Ranked, with reasons', body: 'Every scheme shows a fit score, the criteria you meet, and the ones still unknown.' },
+        { key: 4, n: '04', title: 'Then it does the paperwork', body: 'Open any match for its rules, a document checklist, and a drafted application you can edit and print.' },
+      ],
+      guardrails: [
+        { key: 1, title: 'Unknown is not failed', body: 'Anything you have not answered shows as “?” — it never counts against you.' },
+        { key: 2, title: 'Agency always named', body: 'Each match carries its implementing agency and ministry so you can verify it.' },
+        { key: 3, title: 'Confidence on the card', body: 'Where the assistant is unsure of a limit, the card says so and tells you to confirm.' },
+        { key: 4, title: 'Ask “why?” on anything', body: 'One tap makes the assistant defend a score, criterion by criterion.' },
+      ],
+      coverage: ['Open to all', 'SC / ST', 'OBC', 'Divyangjan', 'Safai Karamcharis', 'Transgender persons', 'Women entrepreneurs', 'Denotified tribes', 'State MSME schemes'].map((t, i) => ({ key: i, text: t })),
+
+      ...this.panelVM(),
+      closePanel: () => this.setState({ panel: null, panelData: null }),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,221 @@
+{
+  "lastVerified": "2026-09",
+  "schemes": [
+    {
+      "id": "mudra",
+      "name": "PM MUDRA Yojana",
+      "agency": "Dept. of Financial Services, Ministry of Finance · via any scheduled bank / Jan Samarth Portal",
+      "categories": ["universal"],
+      "amount": "Shishu up to ₹50,000 · Kishor up to ₹5 lakh · Tarun up to ₹10 lakh · Tarun Plus up to ₹20 lakh",
+      "interest": "Bank-determined, no ceiling fixed by scheme; processing fee nil on Shishu, ~0.5% on Kishor/Tarun",
+      "deadline": "Rolling",
+      "eligibility": [
+        "Indian citizen aged 18-65",
+        "Non-farm income-generating micro/small enterprise (manufacturing, trading or services)",
+        "Tarun Plus requires a prior fully-repaid Tarun loan"
+      ],
+      "documents": ["Aadhaar", "PAN", "Business plan / project estimate", "Bank statements"],
+      "howToApply": ["Apply via any scheduled bank, NBFC or MFI, or online via the Jan Samarth Portal", "Submit business plan and KYC documents", "Loan sanctioned against MUDRA Card for working capital drawdown"],
+      "sourceUrl": "https://www.mudra.org.in",
+      "sourceTitle": "MUDRA — official portal"
+    },
+    {
+      "id": "pmegp",
+      "name": "PMEGP (Prime Minister's Employment Generation Programme)",
+      "agency": "KVIC · Ministry of MSME (delivered via KVIC, State KVIBs and District Industries Centres)",
+      "categories": ["universal"],
+      "amount": "Project cost up to ₹50 lakh (manufacturing) or ₹20 lakh (service/trading); subsidy 15-25% general, 25-35% for SC/ST/OBC/women/PwD/NE/ex-servicemen and special categories",
+      "interest": "Bank loan rate on the balance after subsidy",
+      "deadline": "Rolling",
+      "eligibility": [
+        "Age 18 and above",
+        "New unit only — one person per family, no prior PMEGP/state subsidy on this project",
+        "Own contribution 10% (general) or 5% (special category incl. SC/ST/OBC/women/PwD/NE)"
+      ],
+      "documents": ["Aadhaar", "Project report", "Caste/category certificate if claiming special-category margin", "Educational qualification proof if applicable"],
+      "howToApply": ["Apply online at kviconline.gov.in/pmegpeportal", "Interview at KVIC/KVIB/DIC", "Bank appraisal and sanction", "Mandatory EDP training before subsidy release"],
+      "sourceUrl": "https://www.kviconline.gov.in/pmegpeportal",
+      "sourceTitle": "PMEGP e-Portal — KVIC, Ministry of MSME"
+    },
+    {
+      "id": "cgtmse",
+      "name": "CGTMSE — Credit Guarantee Scheme for Micro and Small Enterprises",
+      "agency": "CGTMSE · Ministry of MSME / SIDBI",
+      "categories": ["universal"],
+      "amount": "Collateral-free credit guarantee cover up to ₹10 crore per borrower (as of Apr 2025)",
+      "interest": "Guarantee cover 75% of loan, up to 85% for micro enterprises, women, SC/ST and North-East borrowers; +5% extra in RBI-identified credit-deficient districts",
+      "deadline": "Rolling",
+      "eligibility": [
+        "Micro or small enterprise as per MSME classification",
+        "Loan extended by a CGTMSE member lending institution (most banks/NBFCs)",
+        "Not a substitute for the loan itself — this only guarantees it, doesn't disburse cash"
+      ],
+      "documents": ["Udyam registration", "Loan sanction letter from lending bank"],
+      "howToApply": ["Apply for the underlying business loan at a member bank/NBFC", "Bank applies for CGTMSE cover on your behalf — no separate applicant paperwork"],
+      "sourceUrl": "https://www.cgtmse.in",
+      "sourceTitle": "CGTMSE — official site"
+    },
+    {
+      "id": "stand-up-india",
+      "name": "Stand-Up India",
+      "agency": "SIDBI · scheduled commercial banks (Dept. of Financial Services)",
+      "categories": ["sc", "st", "women"],
+      "amount": "₹10 lakh – ₹1 crore, composite loan (term loan + working capital)",
+      "interest": "Bank base rate + tenor premium + up to 3%, capped per scheme guidelines",
+      "deadline": "Rolling",
+      "eligibility": [
+        "SC/ST and/or woman entrepreneur, age 18+",
+        "Greenfield project — first-time venture in manufacturing, services, trading or agri-allied activity",
+        "For group enterprises, at least 51% stake held by an SC/ST or woman promoter"
+      ],
+      "documents": ["Aadhaar", "PAN", "Caste certificate (if SC/ST route)", "Project report"],
+      "howToApply": ["Apply via Stand-Up India portal (standupmitra.in) or directly at a scheduled commercial bank branch", "Handholding support available through the portal", "Bank appraisal and sanction"],
+      "sourceUrl": "https://www.standupmitra.in",
+      "sourceTitle": "Stand-Up India — official portal"
+    },
+    {
+      "id": "pm-vishwakarma",
+      "name": "PM Vishwakarma",
+      "agency": "Ministry of MSME / Ministry of Skill Development",
+      "categories": ["universal", "artisan"],
+      "amount": "Collateral-free loans up to ₹3 lakh in two tranches (₹1 lakh, then ₹2 lakh) + ₹15,000 toolkit e-voucher + skill training stipend",
+      "interest": "Concessional ~5% p.a.",
+      "deadline": "Rolling",
+      "eligibility": [
+        "Engaged in one of 18 traditional trades (carpenter, blacksmith, potter, tailor, cobbler, mason and others), working with hands and tools",
+        "Registered/engaged in the trade on date of registration",
+        "Must not have taken a similar self-employment loan (PMEGP, PM SVANidhi, MUDRA) for business development in the last 5 years",
+        "First tranche requires completing Basic Skill Training"
+      ],
+      "documents": ["Aadhaar", "Trade/community proof if applicable"],
+      "howToApply": ["Register free via a Common Service Centre (CSC) or pmvishwakarma.gov.in", "Verification by local body/ULB", "Complete Basic Training, then access toolkit e-voucher and first loan tranche"],
+      "sourceUrl": "https://pmvishwakarma.gov.in",
+      "sourceTitle": "PM Vishwakarma — official portal"
+    },
+    {
+      "id": "sisfs",
+      "name": "Startup India Seed Fund Scheme (SISFS)",
+      "agency": "DPIIT, Ministry of Commerce & Industry",
+      "categories": ["universal"],
+      "amount": "Up to ₹20 lakh grant (proof of concept/prototype) + up to ₹50 lakh via convertible debentures/debt (market entry, scaling)",
+      "interest": "N/A for grant portion; debt portion terms set by the incubator disbursing funds",
+      "deadline": "Rolling, subject to scheme's overall ₹945 crore outlay and incubator selection cycles",
+      "eligibility": [
+        "DPIIT-recognised startup, incorporated not more than 2 years ago",
+        "At least 51% owned by Indian founders",
+        "Must not have received more than ₹10 lakh in earlier government grants/aid",
+        "Sole proprietorships and public limited companies not eligible"
+      ],
+      "documents": ["DPIIT recognition certificate", "Incorporation certificate", "Pitch deck / product plan"],
+      "howToApply": ["Apply via seedfund.startupindia.gov.in to an approved incubator", "Incubator evaluation committee reviews and disburses"],
+      "sourceUrl": "https://seedfund.startupindia.gov.in",
+      "sourceTitle": "Startup India Seed Fund Scheme — official portal"
+    },
+    {
+      "id": "nbcfdc",
+      "name": "NBCFDC Individual/General Loan Scheme",
+      "agency": "National Backward Classes Finance & Development Corporation · Ministry of Social Justice & Empowerment",
+      "categories": ["obc"],
+      "amount": "Individual Loan Scheme up to ₹25 lakh; General Loan up to ₹15 lakh; Mahila Samriddhi Yojana (women, OBC) up to ₹1 lakh",
+      "interest": "Concessional, NBCFDC funds ~85% via channel partner, beneficiary/channel partner covers the rest",
+      "deadline": "Rolling",
+      "eligibility": [
+        "Belongs to a notified Other Backward Class",
+        "Annual family income up to ₹5 lakh (Individual Loan Scheme) or ₹3 lakh (General Loan)",
+        "Applied through an approved State Channelising Agency or bank"
+      ],
+      "documents": ["OBC/caste certificate", "Income certificate", "Aadhaar"],
+      "howToApply": ["Apply through your State OBC Finance Corporation (channelising agency) or partner bank", "Project appraisal and sanction"],
+      "sourceUrl": "https://nbcfdc.gov.in",
+      "sourceTitle": "NBCFDC — official site"
+    },
+    {
+      "id": "nhfdc",
+      "name": "Divyangjan Swavalamban Yojana (NHFDC)",
+      "agency": "National Divyangjan Finance & Development Corporation (NDFDC/NHFDC) · Dept. of Empowerment of Persons with Disabilities",
+      "categories": ["pwd"],
+      "amount": "Loans up to ₹50 lakh for income-generating activity; Vishesh Microfinance Yojana up to ₹60,000 for micro-enterprise",
+      "interest": "Concessional, roughly 5-9% p.a.; extra 1% rebate for women with disabilities on loans up to ₹50,000",
+      "deadline": "Rolling",
+      "eligibility": [
+        "Indian citizen with 40% or more disability (relaxed to age 14 for persons with intellectual disability)",
+        "Age 18 and above (standard route)",
+        "Viable income-generating business plan"
+      ],
+      "documents": ["Disability certificate (40%+)", "Aadhaar", "Project report"],
+      "howToApply": ["Apply through State Channelising Agency for persons with disabilities, or NHFDC directly", "Project appraisal and disbursal"],
+      "sourceUrl": "https://www.nhfdc.nic.in",
+      "sourceTitle": "NHFDC / NDFDC — official site"
+    },
+    {
+      "id": "nskfdc",
+      "name": "NSKFDC Micro Credit Finance Scheme",
+      "agency": "National Safai Karamcharis Finance & Development Corporation · Ministry of Social Justice & Empowerment",
+      "categories": ["safai_karamchari"],
+      "amount": "Small/Petty Business Scheme up to ₹60,000; Micro Credit Finance Scheme up to ₹1 lakh (with up to 50% subsidy, capped ₹10,000, for BPL beneficiaries)",
+      "interest": "Concessional, via channelising agency; beneficiary margin money ~10%",
+      "deadline": "Rolling",
+      "eligibility": [
+        "Safai Karamchari, manual scavenger, or their dependent",
+        "Viable small business or income-generating activity"
+      ],
+      "documents": ["Proof of occupation/community status", "Aadhaar", "BPL proof for subsidy component"],
+      "howToApply": ["Apply through State Safai Karamchari Finance & Development Corporation or authorised channel partner"],
+      "sourceUrl": "https://nskfdc.nic.in",
+      "sourceTitle": "NSKFDC — official site"
+    },
+    {
+      "id": "nsfdc",
+      "name": "NSFDC Term Loan Scheme",
+      "agency": "National Scheduled Castes Finance & Development Corporation · Ministry of Social Justice & Empowerment",
+      "categories": ["sc"],
+      "amount": "Up to ₹30 lakh (up to 90% of project cost); education/skill loans up to ₹4 lakh for courses up to 2 years",
+      "interest": "~4% p.a. to beneficiary (0.5% further rebate for women), repayment up to 7 years",
+      "deadline": "Rolling",
+      "eligibility": [
+        "Belongs to a Scheduled Caste",
+        "Annual family income up to ₹5 lakh",
+        "Viable income-generating project"
+      ],
+      "documents": ["SC certificate", "Income certificate", "Aadhaar", "Project report"],
+      "howToApply": ["Apply through State SC Finance & Development Corporation (channelising agency)", "Project appraisal and sanction"],
+      "sourceUrl": "https://www.nsfdc.nic.in",
+      "sourceTitle": "NSFDC — official site"
+    },
+    {
+      "id": "nstfdc",
+      "name": "NSTFDC Term Loan Scheme",
+      "agency": "National Scheduled Tribes Finance & Development Corporation · Ministry of Tribal Affairs",
+      "categories": ["st"],
+      "amount": "Term Loan up to ₹50 lakh (up to 90% of project cost); Adivasi Mahila Sashaktikaran Yojana up to ₹2 lakh for ST women; Margin Money Support under Stand-Up India up to 15% of project cost",
+      "interest": "Concessional, via State ST Finance & Development Corporation",
+      "deadline": "Rolling",
+      "eligibility": [
+        "Belongs to a Scheduled Tribe",
+        "Viable income-generating project",
+        "ST women may use the dedicated Adivasi Mahila Sashaktikaran Yojana route"
+      ],
+      "documents": ["ST certificate", "Aadhaar", "Project report"],
+      "howToApply": ["Apply through State ST Finance & Development Corporation (channelising agency)"],
+      "sourceUrl": "https://nstfdc.tribal.gov.in",
+      "sourceTitle": "NSTFDC — official site"
+    },
+    {
+      "id": "smile",
+      "name": "SMILE — Support for Marginalised Individuals for Livelihood and Enterprise (transgender component)",
+      "agency": "Ministry of Social Justice & Empowerment",
+      "categories": ["transgender"],
+      "amount": "Skill training with stipend, Garima Greh shelter with food/medical care, education support Class IX through postgraduate; not a direct business loan — feeds into MUDRA/PMEGP/Stand-Up India for enterprise credit",
+      "interest": "N/A — grant/welfare scheme, not a loan product",
+      "deadline": "Rolling",
+      "eligibility": [
+        "Self-identifies as transgender",
+        "Seeking skilling, shelter, education support or livelihood linkage"
+      ],
+      "documents": ["Transgender identity certificate (issued under the Transgender Persons Act) or self-declaration as applicable", "Aadhaar"],
+      "howToApply": ["Apply via the National Portal for Transgender Persons (transgender.dosje.gov.in) or nearest Garima Greh", "Training partner assigns market-linked skilling"],
+      "sourceUrl": "https://transgender.dosje.gov.in",
+      "sourceTitle": "National Portal for Transgender Persons — Ministry of Social Justice & Empowerment"
+    }
+  ]
+}

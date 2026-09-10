@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400&display=swap" />
+<style>
+  body { margin: 0; background: #0a0a0b; }
+  * { box-sizing: border-box; }
+  a { color: #f0a72b; text-decoration: none; }
+  a:hover { color: #ffc45c; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: #2a2a30; border-radius: 8px; border: 3px solid #0a0a0b; }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes cardIn { from { opacity: 0; transform: translateY(14px) scale(.985); } to { opacity: 1; transform: none; } }
+  @keyframes blip { 0%, 80%, 100% { opacity: .25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+  @keyframes ripple { from { transform: scale(1); opacity: .5; } to { transform: scale(2.4); opacity: 0; } }
+  @keyframes drift { 0% { transform: translate3d(-4%, -2%, 0) scale(1); } 50% { transform: translate3d(4%, 3%, 0) scale(1.12); } 100% { transform: translate3d(-4%, -2%, 0) scale(1); } }
+  @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+  @keyframes caret { 50% { opacity: 0; } }
+</style>
+</helmet>
+<div style="position: relative; height: 100dvh; min-height: 480px; display: flex; flex-direction: column; background: #0a0a0b; color: #f4efe6; font-family: Manrope, system-ui, sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden;">
+
+  <div style="position: absolute; inset: -20% -10% auto -10%; height: 70vh; pointer-events: none; background: radial-gradient(38% 46% at 22% 18%, rgba(240,167,43,.13), transparent 70%), radial-gradient(34% 40% at 78% 10%, rgba(120,150,255,.08), transparent 70%); filter: blur(10px); animation: drift 26s ease-in-out infinite;"></div>
+
+  <header style="position: relative; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; padding: 16px 24px; border-bottom: 1px solid #1e1e23; background: rgba(10,10,11,.72); backdrop-filter: blur(8px);">
+    <div style="display: flex; align-items: center; gap: 11px;">
+      <div style="width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(145deg, #f0a72b, #c07d12); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #241703;">से</div>
+      <div style="display: flex; flex-direction: column; gap: 1px;">
+        <div style="font-family: Newsreader, Georgia, serif; font-size: 19px; line-height: 1.1; letter-spacing: .2px;">Setu</div>
+        <div style="font-size: 10.5px; letter-spacing: .09em; text-transform: uppercase; color: #8d867c;">Ministry of Social Justice &amp; Empowerment</div>
+      </div>
+    </div>
+    <div style="flex: 1 1 60px;"></div>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <span style="font-size: 11.5px; color: #8d867c; letter-spacing: .04em;">Eligibility profile</span>
+      <div style="width: 118px; height: 6px; border-radius: 99px; background: #1e1e23; overflow: hidden;">
+        <div style="height: 100%; border-radius: 99px; background: linear-gradient(90deg, #c07d12, #f0a72b); width: {{ completion }}%; transition: width .6s cubic-bezier(.2,.8,.2,1);"></div>
+      </div>
+      <span style="font-size: 11.5px; font-variant-numeric: tabular-nums; color: #f0a72b; min-width: 30px;">{{ completionLabel }}</span>
+    </div>
+    <button onClick="{{ reset }}" style="border: 1px solid #2a2a30; background: #131316; color: #cfc7bb; font: 500 12px Manrope, sans-serif; padding: 7px 12px; border-radius: 99px; cursor: pointer;" style-hover="border-color: #3a3a42; color: #f4efe6;">New chat</button>
+    <button style="border: 1px solid #2a2a30; background: #131316; color: #cfc7bb; font: 500 12px Manrope, sans-serif; padding: 7px 12px; border-radius: 99px; cursor: pointer;" style-hover="border-color: #3a3a42; color: #f4efe6;">EN · हिं</button>
+  </header>
+
+  <main style="position: relative; flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, min(420px, 34%)); grid-auto-rows: minmax(0, 1fr); align-items: stretch; min-height: 0; overflow: hidden;">
+
+    <section style="min-width: 0; display: flex; flex-direction: column; min-height: 0; overflow: hidden; border-right: 1px solid #1e1e23;">
+
+      <div ref="{{ scrollRef }}" style="flex: 1 1 0; min-height: 0; overflow-y: auto; padding: 34px clamp(18px, 5vw, 54px) 8px;">
+        <div style="max-width: 720px; margin: 0 auto; min-height: 0; display: flex; flex-direction: column; gap: 26px;">
+
+          <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ true }}">
+            <div style="padding: clamp(0px, 4vh, 48px) 0 0; animation: rise .6s ease both;">
+              <h1 style="font-family: Newsreader, Georgia, serif; font-weight: 300; font-size: clamp(30px, 4.4vw, 46px); line-height: 1.12; margin: 0 0 12px; letter-spacing: -.4px;">What are you building?</h1>
+              <p style="margin: 0 0 28px; max-width: 48ch; font-size: 15.5px; line-height: 1.6; color: #a09a91; text-wrap: pretty;">Tell me in your own words. I&rsquo;ll ask a few short questions and match you against central and state schemes &mdash; open to any entrepreneur in India, with extra support routes where you qualify for them.</p>
+              <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                <sc-for list="{{ starters }}" as="s" hint-placeholder-count="4">
+                  <button onClick="{{ s.send }}" style="text-align: left; border: 1px solid #24242a; background: #101013; color: #ded7cc; font: 500 13.5px Manrope, sans-serif; padding: 12px 15px; border-radius: 13px; cursor: pointer; max-width: 320px; line-height: 1.4; transition: all .18s ease;" style-hover="border-color: #f0a72b; background: #16130c; color: #fff;">{{ s.text }}</button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-for list="{{ messages }}" as="m" hint-placeholder-count="0">
+            <div style="animation: rise .45s cubic-bezier(.2,.8,.2,1) both;">
+              <sc-if value="{{ m.isUser }}" hint-placeholder-val="{{ false }}">
+                <div style="display: flex; justify-content: flex-end;">
+                  <div style="max-width: 78%; background: #17171b; border: 1px solid #24242a; padding: 12px 16px; border-radius: 16px 16px 4px 16px; font-size: 15px; line-height: 1.55; color: #f4efe6;">{{ m.text }}</div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ m.isBot }}" hint-placeholder-val="{{ false }}">
+                <div style="display: flex; gap: 14px;">
+                  <div style="flex: none; width: 26px; height: 26px; border-radius: 8px; border: 1px solid #3a2c0f; background: #1a1408; display: flex; align-items: center; justify-content: center; margin-top: 2px;">
+                    <div style="width: 7px; height: 7px; border-radius: 99px; background: #f0a72b;"></div>
+                  </div>
+                  <div style="min-width: 0; font-size: 15.5px; line-height: 1.68; color: #e7e1d7; white-space: pre-wrap; text-wrap: pretty;">{{ m.text }}<sc-if value="{{ m.streaming }}" hint-placeholder-val="{{ false }}"><span style="display: inline-block; width: 8px; height: 16px; margin-left: 3px; vertical-align: -2px; background: #f0a72b; animation: caret 1s steps(1) infinite;"></span></sc-if></div>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+
+          <sc-if value="{{ thinking }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; gap: 14px; align-items: center; animation: rise .3s ease both;">
+              <div style="flex: none; width: 26px; height: 26px; border-radius: 8px; border: 1px solid #3a2c0f; background: #1a1408; display: flex; align-items: center; justify-content: center;">
+                <div style="width: 7px; height: 7px; border-radius: 99px; background: #f0a72b;"></div>
+              </div>
+              <div style="display: flex; gap: 5px;">
+                <span style="width: 6px; height: 6px; border-radius: 99px; background: #f0a72b; animation: blip 1.1s ease-in-out infinite;"></span>
+                <span style="width: 6px; height: 6px; border-radius: 99px; background: #f0a72b; animation: blip 1.1s ease-in-out .16s infinite;"></span>
+                <span style="width: 6px; height: 6px; border-radius: 99px; background: #f0a72b; animation: blip 1.1s ease-in-out .32s infinite;"></span>
+              </div>
+              <span style="font-size: 12.5px; color: #7d766c; letter-spacing: .02em;">{{ thinkingLabel }}</span>
+            </div>
+          </sc-if>
+
+          <div style="height: 12px;"></div>
+        </div>
+      </div>
+
+      <div style="padding: 10px clamp(18px, 5vw, 54px) 22px; background: linear-gradient(transparent, #0a0a0b 42%);">
+        <div style="max-width: 720px; margin: 0 auto;">
+          <sc-if value="{{ hasHints }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; flex-wrap: wrap; gap: 7px; align-items: center; padding: 0 4px 10px;">
+              <span style="font-size: 11px; color: #6e685f; letter-spacing: .06em; text-transform: uppercase;">Try</span>
+              <sc-for list="{{ hints }}" as="h" hint-placeholder-count="0">
+                <button onClick="{{ h.fill }}" style="border: 1px dashed #2c2c33; background: transparent; color: #989186; font: 500 12.5px Manrope, sans-serif; padding: 6px 11px; border-radius: 99px; cursor: pointer; transition: all .16s ease;" style-hover="border-color: #f0a72b; color: #f0a72b; border-style: solid;">{{ h.text }}</button>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <div style="display: flex; align-items: flex-end; gap: 10px; border: 1px solid #26262c; background: #101013; border-radius: 20px; padding: 10px 10px 10px 18px; box-shadow: 0 18px 40px -28px rgba(0,0,0,.9);">
+            <input value="{{ draft }}" onChange="{{ onDraft }}" onKeyDown="{{ onKey }}" placeholder="{{ placeholder }}" style="flex: 1; min-width: 0; border: 0; outline: none; background: transparent; color: #f4efe6; font: 400 15.5px Manrope, sans-serif; padding: 9px 0;" />
+            <button onClick="{{ toggleVoice }}" title="Speak your answer" style="position: relative; flex: none; width: 40px; height: 40px; border-radius: 99px; border: 1px solid #2a2a30; background: #17171b; color: #b9b1a5; cursor: pointer; display: flex; align-items: center; justify-content: center;" style-hover="border-color: #3a3a42; color: #f4efe6;">
+              <sc-if value="{{ listening }}" hint-placeholder-val="{{ false }}">
+                <span style="position: absolute; inset: 0; border-radius: 99px; border: 1px solid #f0a72b; animation: ripple 1.5s ease-out infinite;"></span>
+              </sc-if>
+              <span style="display: block; width: 9px; height: 15px; border-radius: 99px; background: currentColor;"></span>
+            </button>
+            <button onClick="{{ send }}" style="flex: none; height: 40px; padding: 0 20px; border-radius: 99px; border: 0; background: linear-gradient(145deg, #f0a72b, #d4901c); color: #211502; font: 700 13.5px Manrope, sans-serif; cursor: pointer; transition: filter .16s ease;" style-hover="filter: brightness(1.12);">Send</button>
+          </div>
+          <div style="padding: 9px 6px 0; font-size: 11.5px; color: #6e685f;">Setu checks 180+ central and state schemes. Final eligibility is decided by the implementing agency.</div>
+        </div>
+      </div>
+    </section>
+
+    <aside style="min-width: 0; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: #0c0c0e;">
+      <div style="display: flex; align-items: baseline; gap: 9px; padding: 20px 22px 14px; border-bottom: 1px solid #1a1a1f;">
+        <span style="font-family: Newsreader, Georgia, serif; font-size: 18px;">Live matches</span>
+        <span style="font-size: 11.5px; color: #7d766c; font-variant-numeric: tabular-nums;">{{ matchCountLabel }}</span>
+      </div>
+
+      <div style="flex: 1 1 0; min-height: 0; overflow-y: auto; padding: 16px 18px 28px; display: flex; flex-direction: column; gap: 12px;">
+        <sc-if value="{{ noMatches }}" hint-placeholder-val="{{ true }}">
+          <div style="padding: 6px 4px;">
+            <p style="margin: 0 0 18px; font-size: 13.5px; line-height: 1.6; color: #8d867c; text-wrap: pretty;">Schemes will rank here as you answer &mdash; fit score, what you meet, and what is missing.</p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <sc-for list="{{ ghosts }}" as="g" hint-placeholder-count="3">
+                <div style="height: 78px; border-radius: 14px; border: 1px solid #17171c; background: linear-gradient(100deg, #101013 25%, #16161b 50%, #101013 75%); background-size: 200% 100%; animation: shimmer 2.6s linear infinite;"></div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-for list="{{ matches }}" as="s" hint-placeholder-count="0">
+          <div style="border: 1px solid #1f1f25; background: #101013; border-radius: 16px; padding: 15px 15px 13px; animation: cardIn .5s cubic-bezier(.2,.8,.2,1) both;">
+            <div style="display: flex; gap: 12px; align-items: flex-start;">
+              <div style="flex: none; width: 46px; height: 46px; border-radius: 99px; background: conic-gradient(#f0a72b {{ s.deg }}deg, rgba(255,255,255,.07) 0); display: flex; align-items: center; justify-content: center;">
+                <div style="width: 36px; height: 36px; border-radius: 99px; background: #101013; display: flex; align-items: center; justify-content: center; font: 700 12px Manrope, sans-serif; font-variant-numeric: tabular-nums; color: #f0a72b;">{{ s.fitLabel }}</div>
+              </div>
+              <div style="min-width: 0; flex: 1;">
+                <div style="font-size: 14.5px; font-weight: 600; line-height: 1.35; color: #f4efe6; text-wrap: pretty;">{{ s.name }}</div>
+                <div style="font-size: 11.5px; color: #8d867c; margin-top: 3px;">{{ s.agency }}</div>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px;">
+              <span style="font: 700 10.5px Manrope, sans-serif; letter-spacing: .07em; text-transform: uppercase; padding: 4px 9px; border-radius: 99px; color: {{ s.statusColor }}; background: {{ s.statusBg }};">{{ s.status }}</span>
+              <span style="font: 600 11.5px Manrope, sans-serif; padding: 4px 9px; border-radius: 99px; color: #ded7cc; background: #191920;">{{ s.amount }}</span>
+              <span style="font: 500 11.5px Manrope, sans-serif; padding: 4px 9px; border-radius: 99px; color: #98918e; background: #191920;">{{ s.deadline }}</span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 5px; margin-top: 12px; padding-top: 11px; border-top: 1px solid #1b1b21;">
+              <sc-for list="{{ s.criteria }}" as="c" hint-placeholder-count="2">
+                <div style="display: flex; gap: 8px; align-items: baseline; font-size: 12.5px; line-height: 1.45;">
+                  <span style="flex: none; width: 12px; text-align: center; font-weight: 700; color: {{ c.color }};">{{ c.mark }}</span>
+                  <span style="color: #a8a19a;">{{ c.label }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </aside>
+  </main>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+const SCHEMES = [
+  { name: 'PM MUDRA Yojana — Kishor', agency: 'Any scheduled bank · SIDBI refinance', amount: '₹50k – ₹5 lakh', deadline: 'Rolling', open: true, crit: [
+    { label: 'Non-farm micro enterprise', t: p => p.sector !== 'farm' },
+    { label: 'Credit need up to ₹5 lakh', t: p => p.capital != null && p.capital <= 500000 },
+    { label: 'Age 18 and above', t: p => p.age >= 18 } ] },
+  { name: 'PMEGP — margin money subsidy', agency: 'KVIC · Ministry of MSME', amount: 'up to ₹50 lakh project', deadline: 'Rolling', open: true, crit: [
+    { label: 'Age 18 and above', t: p => p.age >= 18 },
+    { label: 'New unit, not yet subsidised', t: p => p.existing !== true },
+    { label: 'Project cost within ₹50 lakh', t: p => p.capital != null && p.capital <= 5000000 },
+    { label: 'Class VIII pass if project over ₹10 lakh', t: p => p.capital != null && p.capital <= 1000000 ? true : null } ] },
+  { name: 'Stand-Up India', agency: 'SIDBI · scheduled commercial banks', amount: '₹10 lakh – ₹1 cr', deadline: 'Rolling', crit: [
+    { label: 'SC, ST or woman promoter', hard: true, t: p => ['sc', 'st'].includes(p.category) || p.gender === 'female' },
+    { label: 'Greenfield enterprise', t: p => p.existing !== true },
+    { label: 'Loan need ₹10 lakh or more', t: p => p.capital != null && p.capital >= 1000000 } ] },
+  { name: 'NSFDC Term Loan', agency: 'National SC Finance & Development Corp.', amount: 'up to ₹15 lakh', deadline: 'Rolling', crit: [
+    { label: 'Scheduled Caste applicant', hard: true, t: p => p.category === 'sc' },
+    { label: 'Family income within ₹3,00,000', t: p => p.income != null && p.income <= 300000 },
+    { label: 'Age 18–60', t: p => p.age >= 18 && p.age <= 60 } ] },
+  { name: 'NBCFDC Swarnima (women)', agency: 'National Backward Classes Finance Corp.', amount: 'up to ₹2 lakh', deadline: 'Rolling', crit: [
+    { label: 'Other Backward Class applicant', hard: true, t: p => p.category === 'obc' },
+    { label: 'Woman applicant', hard: true, t: p => p.gender === 'female' },
+    { label: 'Family income within ₹3,00,000', t: p => p.income != null && p.income <= 300000 } ] },
+  { name: 'NHFDC Divyangjan Swavalamban', agency: 'Dept. of Empowerment of PwD', amount: 'up to ₹50 lakh', deadline: 'Rolling', crit: [
+    { label: 'Benchmark disability of 40% or more', hard: true, t: p => p.disability === true },
+    { label: 'Age 18 and above', t: p => p.age >= 18 } ] },
+  { name: 'NSTFDC Adivasi Mahila Sashaktikaran', agency: 'National ST Finance & Development Corp.', amount: 'up to ₹2 lakh at 4%', deadline: 'Rolling', crit: [
+    { label: 'Scheduled Tribe woman applicant', hard: true, t: p => p.category === 'st' && p.gender === 'female' },
+    { label: 'Family income within ₹3,00,000', t: p => p.income != null && p.income <= 300000 } ] },
+  { name: 'NSKFDC Mahila Adhikarita', agency: 'Safai Karamchari families', amount: 'up to ₹75,000', deadline: 'Rolling', crit: [
+    { label: 'Safai Karamchari or dependent', hard: true, t: p => p.category === 'safai' },
+    { label: 'Woman applicant', hard: true, t: p => p.gender === 'female' } ] },
+  { name: 'SMILE — livelihood support', agency: 'MoSJE · transgender welfare', amount: 'skilling + seed support', deadline: 'Open cohort', crit: [
+    { label: 'Transgender identity certificate', hard: true, t: p => p.category === 'transgender' },
+    { label: 'Age 18 and above', t: p => p.age >= 18 } ] },
+  { name: 'PM Vishwakarma', agency: 'Ministry of MSME · 18 trades', amount: '₹1 lakh, then ₹2 lakh at 5%', deadline: 'Rolling', open: true, crit: [
+    { label: 'Artisan or craft trade', t: p => p.sector === 'craft' },
+    { label: 'Age 18 and above', t: p => p.age >= 18 },
+    { label: 'Self-employed, family-based work', t: p => p.existing !== false ? true : null } ] },
+  { name: 'CGTMSE collateral-free guarantee', agency: 'Ministry of MSME', amount: 'cover up to ₹5 cr', deadline: 'Rolling', open: true, crit: [
+    { label: 'Micro or small enterprise', t: p => p.sector !== 'farm' },
+    { label: 'Udyam registration', t: p => p.registered === true },
+    { label: 'Seeking a bank loan', t: p => p.capital != null } ] },
+  { name: 'Startup India Seed Fund', agency: 'DPIIT', amount: 'up to ₹50 lakh', deadline: 'Quarterly', open: true, crit: [
+    { label: 'DPIIT-recognised startup, under 2 years', t: p => p.registered === true },
+    { label: 'Innovation or tech-led product', t: p => p.sector === 'tech' },
+    { label: 'Capital need above ₹10 lakh', t: p => p.capital != null && p.capital >= 1000000 } ] },
+];
+
+const CATS = [
+  ['sc', /\b(sc|scheduled caste|dalit)\b/i], ['st', /\b(st|scheduled tribe|adivasi|tribal)\b/i],
+  ['obc', /\b(obc|backward class)\b/i], ['safai', /\b(safai|sanitation worker|karamchari)\b/i],
+  ['transgender', /\b(transgender|trans|kinnar)\b/i], ['general', /\b(general|none|no category|unreserved|don'?t belong)\b/i],
+];
+
+class Component extends DCLogic {
+  state = { messages: [], draft: '', thinking: false, listening: false, profile: {}, asked: [], hints: [] };
+  scrollRef = React.createRef();
+  timers = [];
+
+  componentDidUpdate() {
+    const el = this.scrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }
+  componentWillUnmount() { this.timers.forEach(clearTimeout); }
+  later(fn, ms) { this.timers.push(setTimeout(fn, ms)); }
+
+  parse(text) {
+    const t = text.toLowerCase();
+    const p = { ...this.state.profile };
+    for (const [k, re] of CATS) if (re.test(t)) p.category = k;
+    if (/\b(woman|women|female|she|her|mahila)\b/.test(t)) p.gender = 'female';
+    else if (/\b(man|male|he\b|him)\b/.test(t)) p.gender = 'male';
+    if (/\b(disab|divyang|blind|deaf|wheelchair|pwd)\b/.test(t)) p.disability = true;
+    const age = t.match(/\b(1[8-9]|[2-7][0-9])\s*(?:years|yrs|year|saal)?\s*old|\bage\s*(?:is\s*)?(\d{2})/);
+    if (age) p.age = parseInt(age[1] || age[2], 10);
+    const money = t.match(/(?:rs\.?|₹|inr)?\s*([\d.,]+)\s*(lakh|lac|crore|cr|thousand|k|000)?/g) || [];
+    const toNum = (s) => {
+      const m = s.match(/([\d.,]+)\s*(lakh|lac|crore|cr|thousand|k)?/);
+      if (!m) return null;
+      const n = parseFloat(m[1].replace(/,/g, ''));
+      if (isNaN(n)) return null;
+      const u = m[2] || '';
+      if (/lakh|lac/.test(u)) return n * 1e5;
+      if (/crore|cr/.test(u)) return n * 1e7;
+      if (/thousand|k/.test(u)) return n * 1e3;
+      return n;
+    };
+    if (/income|earn|kama|salary/.test(t)) { const v = toNum(t.split(/income|earn/)[1] || ''); if (v) p.income = v; }
+    if (/loan|capital|need|invest|fund|machine|cost/.test(t)) { const v = toNum(t.split(/loan|capital|need|invest|fund|cost/)[1] || ''); if (v) p.capital = v; }
+    if (/\b(registered|udyam|gst|pvt|llp|company)\b/.test(t) && !/not registered|unregistered|no registration/.test(t)) p.registered = true;
+    if (/not registered|unregistered|no registration|informal/.test(t)) p.registered = false;
+    if (/\b(app|software|ai|saas|tech|platform|startup)\b/.test(t)) p.sector = 'tech';
+    else if (/\b(weav|pott|craft|handicraft|carpent|tailor|artisan|embroid|blacksmith)\b/.test(t)) p.sector = 'craft';
+    else if (/\b(farm|agri|dairy|crop)\b/.test(t)) p.sector = 'farm';
+    else if (/\b(shop|kirana|food|tiffin|salon|repair|service|retail|stall)\b/.test(t)) p.sector = 'retail';
+    if (/\b(existing|already running|since \d{4}|been running)\b/.test(t)) p.existing = true;
+    if (/\b(new|starting|want to start|haven'?t started|planning)\b/.test(t)) p.existing = false;
+    return p;
+  }
+
+  // Evaluates a criterion against the profile, returning null when the predicate
+  // touched any field the user has not answered yet.
+  evalCrit(c, p) {
+    let missing = false;
+    const proxy = new Proxy(p, { get(t, k) {
+      if (t[k] === undefined) { missing = true; return undefined; }
+      return t[k];
+    } });
+    let r;
+    try { r = c.t(proxy); } catch (e) { r = null; }
+    return missing ? null : r;
+  }
+
+  score(s, p) {
+    let met = 0, total = s.crit.length, blocked = false, unknown = 0;
+    const criteria = s.crit.map(c => {
+      const r = this.evalCrit(c, p);
+      if (r === true) { met++; return { label: c.label, mark: '✓', color: '#5ec27a' }; }
+      if (r === null || r === undefined) { unknown++; return { label: c.label, mark: '?', color: '#7d766c' }; }
+      if (c.hard) blocked = true;
+      return { label: c.label, mark: '✕', color: '#d9663f' };
+    });
+    const fit = Math.round(((met + unknown * 0.45) / total) * 100);
+    return { criteria, fit: blocked ? Math.min(fit, 34) : fit, blocked, met, total, unknown };
+  }
+
+  matchList() {
+    const p = this.state.profile;
+    if (!Object.keys(p).length) return [];
+    return SCHEMES.map(s => {
+      const r = this.score(s, p);
+      const status = r.blocked ? 'Not eligible' : r.fit >= 80 ? 'Eligible' : r.fit >= 60 ? 'Likely' : 'Needs more info';
+      const palette = {
+        'Eligible': ['#7de29a', 'rgba(94,194,122,.13)'],
+        'Likely': ['#f0a72b', 'rgba(240,167,43,.12)'],
+        'Needs more info': ['#9d968c', 'rgba(255,255,255,.06)'],
+        'Not eligible': ['#e0836a', 'rgba(217,102,63,.12)'],
+      }[status];
+      return { key: s.name, name: s.name, agency: s.agency, amount: s.amount, deadline: s.deadline,
+        fit: r.fit, fitLabel: r.fit + '%', deg: Math.round(r.fit * 3.6), criteria: r.criteria,
+        status, statusColor: palette[0], statusBg: palette[1] };
+    }).sort((a, b) => b.fit - a.fit).slice(0, 7);
+  }
+
+  nextQuestion(p) {
+    const Q = [
+      { k: 'sector', q: 'Good. What kind of work is it — a shop or service, a craft or trade, something tech-led, or farming-related?', h: ['A tailoring unit', 'Food stall', 'Software product'] },
+      { k: 'capital', q: 'How much money do you need to get going? A rough figure is fine.', h: ['About ₹2 lakh', '₹15 lakh', 'Under ₹50,000'] },
+      { k: 'category', q: 'Some schemes are open to everyone, others are reserved. Do you belong to SC, ST, OBC, a Safai Karamchari family, or none of these?', h: ['SC', 'OBC', 'None of these'] },
+      { k: 'gender', q: 'And how do you identify — woman, man, or transgender? Several schemes carry extra support for women and transgender entrepreneurs.', h: ['Woman', 'Man', 'Transgender'] },
+      { k: 'age', q: 'How old are you?', h: ['I am 28 years old', 'Age is 45'] },
+      { k: 'income', q: 'Roughly what is your annual family income? This decides the subsidised-interest routes.', h: ['Income about ₹2 lakh', 'Income 6 lakh'] },
+      { k: 'registered', q: 'Is the business registered yet — Udyam, GST, a company or LLP?', h: ['Not registered yet', 'Udyam registered'] },
+      { k: 'disability', q: 'Last one — do you have a benchmark disability certificate of 40% or more?', h: ['No', 'Yes, 60%'] },
+    ];
+    return Q.find(x => p[x.k] === undefined);
+  }
+
+  respond(text) {
+    const profile = this.parse(text);
+    const known = Object.keys(profile).length;
+    this.setState({ profile, thinking: true, hints: [] });
+    this.later(() => {
+      const nq = this.nextQuestion(profile);
+      const top = this.matchList()[0];
+      let reply;
+      if (nq) {
+        const lead = known > 1 && top ? `Noted. ${top.name} is already looking like your strongest fit.\n\n` : '';
+        reply = lead + nq.q;
+        this.setState({ hints: nq.h });
+      } else {
+        reply = `That's everything I need. I've ranked ${this.matchList().length} schemes on the right — ${top ? top.name + ' at ' + top.fitLabel + ' fit' : ''} leads. Ask me why any of them scored the way it did, or say "start my application" and I'll draft it.`;
+        this.setState({ hints: ['Why did Stand-Up India drop?', 'Start my application'] });
+      }
+      this.setState({ thinking: false });
+      this.stream(reply);
+    }, 900);
+  }
+
+  stream(full) {
+    const id = 'b' + Date.now();
+    this.setState(s => ({ messages: [...s.messages, { key: id, isBot: true, text: '', streaming: true }] }));
+    let i = 0;
+    const tick = () => {
+      i = Math.min(full.length, i + 3);
+      this.setState(s => ({ messages: s.messages.map(m => m.key === id ? { ...m, text: full.slice(0, i), streaming: i < full.length } : m) }));
+      if (i < full.length) this.later(tick, 18);
+    };
+    this.later(tick, 40);
+  }
+
+  push(text) {
+    if (!text.trim()) return;
+    this.setState(s => ({ messages: [...s.messages, { key: 'u' + Date.now(), isUser: true, text }], draft: '' }));
+    this.respond(text);
+  }
+
+  renderVals() {
+    const p = this.state.profile;
+    const fields = ['sector', 'capital', 'category', 'gender', 'age', 'income', 'registered', 'disability'];
+    const filled = fields.filter(f => p[f] !== undefined).length;
+    const completion = Math.round((filled / fields.length) * 100);
+    const matches = this.matchList();
+    return {
+      completion, completionLabel: completion + '%',
+      scrollRef: this.scrollRef,
+      messages: this.state.messages,
+      isEmpty: this.state.messages.length === 0,
+      thinking: this.state.thinking,
+      thinkingLabel: filled ? 'Re-ranking schemes' : 'Reading your answer',
+      draft: this.state.draft,
+      placeholder: this.state.messages.length ? 'Type your answer…' : 'e.g. I want to start a tailoring unit in Nashik',
+      listening: this.state.listening,
+      onDraft: (e) => this.setState({ draft: e.target.value }),
+      onKey: (e) => { if (e.key === 'Enter') this.push(this.state.draft); },
+      send: () => this.push(this.state.draft),
+      toggleVoice: () => this.setState(s => ({ listening: !s.listening })),
+      reset: () => this.setState({ messages: [], profile: {}, hints: [], draft: '' }),
+      hints: this.state.hints.map((t, i) => ({ key: i, text: t, fill: () => this.push(t) })),
+      hasHints: this.state.hints.length > 0 && !this.state.thinking,
+      starters: [
+        'I want to start a tailoring unit but have no collateral',
+        'I run a small kirana shop and need ₹3 lakh to expand',
+        'I am a potter — is there anything for artisans?',
+        'Which schemes are open to everyone, no category needed?',
+      ].map((t, i) => ({ key: i, text: t, send: () => this.push(t) })),
+      matches, noMatches: matches.length === 0,
+      matchCountLabel: matches.length ? matches.length + ' ranked' : 'nothing yet',
+      ghosts: [{ key: 1 }, { key: 2 }, { key: 3 }],
+    };
+  }
+}
+
+</script>
+</body>
+</html>
